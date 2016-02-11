@@ -1,0 +1,3 @@
+[submodule "src/gmock"]
+	path = src/gmock
+	url = https://atlas.ai.it.fh-worms.de/stash/scm/tst/googlemock.git

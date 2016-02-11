@@ -19,5 +19,9 @@ SOURCES += \
     testVersionInfo.cpp \
     testQttestBehaviour.cpp
 
+INCLUDEPATH += $$_PRO_FILE_PWD_/../gmock/include \
+    $$_PRO_FILE_PWD_/../gmock/gtest/include \
+
 DEPENDENCY_LIBRARIES += app-lib         # used in includes.pri
+DEPENDENCY_LIBRARIES += gmock
 include(../qmake/includes.pri)
