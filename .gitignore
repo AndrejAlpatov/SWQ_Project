@@ -1,0 +1,9 @@
+# QtCreator by default creates build directories starting with 'build',
+# and we have a default (empty) build directory 'build'
+/build*/
+
+# QtCreator saves user specific project configuration in <projectname>.pro.user
+*.pro.user
+
+# QtCreator editor uses extension autosave for intermediate saves
+*.autosave
