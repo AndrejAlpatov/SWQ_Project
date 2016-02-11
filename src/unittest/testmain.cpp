@@ -1,8 +1,11 @@
 //============================================================================
 // Copyright   : This file is in the public domain
-// Description : Qt unit test main file
+// Description : googlemock / googletest main file
 //============================================================================
 
-#include "AutoTest.h"
+#include "gmock/gmock.h"
 
-TEST_MAIN
+int main(int argc, char **argv) {
+  ::testing::InitGoogleMock(&argc, argv);
+  return RUN_ALL_TESTS();
+}

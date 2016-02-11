@@ -3,45 +3,34 @@
 // Description : test generated version information
 //============================================================================
 
-#include "AutoTest.h"
 #include "Helpers.h"
 #include "app-lib.h"
+#include <gtest/gtest.h>
+#include <iostream>
 
-class TestVersionInfo: public QObject
-{
-    Q_OBJECT
+using namespace std;
 
-  private slots:
+TEST(VersionInfo,getVersionIsNotEmpty) {
+    QString version = VersionInfo::getVersion();
+    cout << "[          ] Version: " << version.toStdString() << endl;
 
-    void getVersionIsNotEmpty()
-    {
-        QString version = VersionInfo::getVersion();
-        qDebug() << "Version is" << version;
+    ASSERT_FALSE( version.isEmpty() );
+}
 
-        QVERIFY( ! version.isEmpty() );
-    }
+TEST(VersionInfo,getVersionIsPrintable) {
+    QString version = VersionInfo::getVersion();
 
-    void getVersionIsPrintable()
-    {
-        QString version = VersionInfo::getVersion();
+    ASSERT_TRUE( Helpers::isPrintable(version) );
+}
 
-        QVERIFY( Helpers::isPrintable(version) );
-    }
+TEST(VersionInfo,getBuildTagIsNotEmpty) {
+    QString buildTag = VersionInfo::getBuildTag();
 
-    void getBuildTagIsNotEmpty()
-    {
-        QString buildTag = VersionInfo::getBuildTag();
+    ASSERT_FALSE( buildTag.isEmpty() );
+}
 
-        QVERIFY( ! buildTag.isEmpty() );
-    }
+TEST(VersionInfo,getBuildTagIsPrintable) {
+    QString buildTag = VersionInfo::getBuildTag();
 
-    void getBuildTagIsPrintable()
-    {
-        QString buildTag = VersionInfo::getBuildTag();
-
-        QVERIFY( Helpers::isPrintable(buildTag) );
-    }
-};
-AUTO_TEST_SUITE(TestVersionInfo);
-
-#include "testVersionInfo.moc"
+    ASSERT_TRUE( Helpers::isPrintable(buildTag) );
+}
