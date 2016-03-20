@@ -19,9 +19,9 @@ SOURCES += \
     testGoogleTestBehaviour.cpp \
     testGoogleMockBehaviour.cpp
 
-INCLUDEPATH += $$_PRO_FILE_PWD_/../gmock/include \
-    $$_PRO_FILE_PWD_/../gmock/gtest/include \
+INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
+    $$_PRO_FILE_PWD_/../googletest/googletest/include \
 
-DEPENDENCY_LIBRARIES += gmock \    # used in includes.pri
+DEPENDENCY_LIBRARIES += googletest \    # used in includes.pri
     app-lib
 include(../qmake/includes.pri)
