@@ -5,9 +5,9 @@ TEMPLATE = subdirs
 SUBDIRS = app-main \
 	  app-lib \
           unittest \
-	  gmock
+	  googletest
 
 app-main.depends = app-lib
-unittest.depends = app-lib gmock
+unittest.depends = app-lib googletest
 
 OTHER_FILES = ../README.md
