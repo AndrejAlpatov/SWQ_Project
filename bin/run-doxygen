@@ -20,6 +20,7 @@ fi
 
 # e.g. V0.7-12-g6c5af99
 SCM_REVISION=$(git describe --tags --dirty --always | tr ' ' '_')
+[ -d build/html ] || mkdir build/html
 echo "PROJECT_NUMBER = $SCM_REVISION" > build/html/project-number.dox
 
 doxygen doc/doxygen/Doxyfile
