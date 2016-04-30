@@ -20,8 +20,12 @@ fi
 
 # e.g. V0.7-12-g6c5af99
 SCM_REVISION=$(git describe --tags --dirty --always | tr ' ' '_')
-[ -d build/html ] || mkdir build/html
-echo "PROJECT_NUMBER = $SCM_REVISION" > build/html/project-number.dox
+# [ -d build/html ] || mkdir build/html
+echo "PROJECT_NUMBER = $SCM_REVISION" > project-number.dox
+# due to a bug jenkins does not search for the @INCLUDE file from the
+# current directory, but obviously from the Doxyfile directory; so
+# create it there too.
+echo "PROJECT_NUMBER = $SCM_REVISION" > doc/doxygen/project-number.dox
 
 doxygen doc/doxygen/Doxyfile
 exit $?			# just to get a $PS4 output
