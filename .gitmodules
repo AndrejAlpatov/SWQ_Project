@@ -1,3 +1,0 @@
-[submodule "src/googletest"]
-	path = src/googletest
-	url = https://atlas.ai.it.hs-worms.de/bitbucket/scm/tst/googletest.git
