@@ -26,16 +26,7 @@ You can check out the code (and binary libraries) with a command similar
 to:
 
 ```
-  git clone --recursive https://infXXXX@atlas.ai.it.fh-worms.de/stash/scm/tst/googlemock-hello.git
-```
-
-If you forget the ```--recursive```, you need to manually check out the submodules (i.e., googlemock) used inside our
-repository:
-
-```
-cd googlemock-hello
-git submodule update --init --recursive
-
+  git clone https://infXXXX@atlas.ai.it.fh-worms.de/bitbucket/scm/tst/googlemock-hello.git
 ```
 
 ## Preparations:
