@@ -32,23 +32,14 @@ repository and replacing / extending the necessary parts.
 
 \section s_contents Table of Contents
 \li \ref s_intro
-\li \ref s_main
-\li \ref s_lib
-\li \ref s_unittests
+\li \ref g_main
+\li \ref g_applib
+\li \ref g_unittests
 \li \ref s_links
 \li \ref p_license
 
 \section s_intro Introduction
 \todo write introduction
-
-\section s_main Application main()
-\todo write main doc
-
-\section s_lib Application library
-\todo write library doc
-
-\section s_unittests Unit Test Structure
-\todo write unit test doc
 
 \section s_links Links
 

@@ -10,4 +10,11 @@ SUBDIRS = app-main \
 app-main.depends = app-lib
 unittest.depends = app-lib googletest
 
-OTHER_FILES = ../README.md
+OTHER_FILES = ../README.md \
+    ../doc/doxygen/Doxyfile \
+    ../doc/doxygen/mainpage.dox \
+    ../doc/doxygen/license.dox \
+    ../doc/doxygen/applib.dox \
+    ../doc/doxygen/appmain.dox \
+    ../doc/doxygen/unittest.dox \
+
