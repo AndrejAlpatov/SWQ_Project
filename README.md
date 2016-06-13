@@ -1,3 +1,69 @@
+# Hello Googlemock Project
+
+Welcome to the "Hello Googlemock" project - a small example of using
+Google Test and Google Mock as Unit Test environments in a `qmake`
+based C++ project.
+
+--------------------------------------------------------------
+
+## Contents
+
+- Hello Googlemock Project
+  - [Intention](#intention)
+  - [Features](#markdown-header-Features)
+  - Quickstart
+  - Links
+  - License
+- Project Structure
+  - Directories
+  - Documentation
+- Build Instructions
+  - Prerequisites:
+  - Installing QT:
+  - Checking out the code:
+  - Preparations:
+  - Building the application and the unit test program:
+  - Cleaning the build directory:
+
+--------------------------------------------------------------
+
+## Intention<a name=intention></a>
+
+- simple project base
+- Google Mock evalation environment
+
+## Features<a name=markdown-header-Features></a>
+
+- portable C++ (Linux, Windows, OS X), due to
+- `qmake` project based build environment
+- multi directory project layout supports building libraries
+- GoogleTest xUnit-like unit test environment
+- GoogleMock supporting
+- Open Source License (GPLv3)
+
+## Quickstart
+
+## Links
+- Project Home
+- Qt
+- Google Test / Google Mock Original
+- Doxygen
+- Git
+
+## License
+- Code: GPLv3
+- Documentation: CC BY SA
+
+--------------------------------------------------------------
+
+# Project Structure
+
+## Directories
+
+## Documentation
+
+--------------------------------------------------------------
+
 # Build Instructions
 
 ## Prerequisites:
@@ -11,49 +77,39 @@ the instructions on http://qt-project.org
 
 - E.g. download the Qt Online Installer for Linux (32-bit or 64-bit,
   depending on your system); for me (with Qt 5.1), the file name was
-  qt-linux-opensource-1.4.0-2-x86_64-online.run. Adapt the following to
+  `qt-linux-opensource-1.4.0-2-x86_64-online.run`. Adapt the following to
   the current file name.
 
-```
- chmod +x qt-linux-opensource-1.4.0-2-x86_64-online.run
- sudo qt-linux-opensource-1.4.0-2-x86_64-online.run
- PATH=/opt/Qt/5.3/gcc_64/bin:$PATH	# adapt to your needs,
- # put it into $HOME/.profile or similar
-```
+      chmod +x qt-linux-opensource-1.4.0-2-x86_64-online.run
+      sudo qt-linux-opensource-1.4.0-2-x86_64-online.run
+      PATH=/opt/Qt/5.3/gcc_64/bin:$PATH	# adapt to your needs,
+      					# put it into $HOME/.profile or similar
 
 ## Checking out the code:
 You can check out the code (and binary libraries) with a command similar
 to:
 
-```
-  git clone https://infXXXX@atlas.ai.it.fh-worms.de/bitbucket/scm/tst/googlemock-hello.git
-```
+    git clone https://infXXXX@atlas.ai.it.fh-worms.de/bitbucket/scm/tst/googlemock-hello.git
 
 ## Preparations:
 Generate your platform specific build environment using cmake started
 from a command line prompt (bash on Linux / Mac OS X; cmd or PowerShell
 or Cygwin on Windows):
 
-```
-  cd build
-  qmake ../src/hello-googlemock.pro CONFIG+=debug	# generates Makefile
-```
+    cd build
+    qmake ../src/hello-googlemock.pro CONFIG+=debug	# generates Makefile
 
 Visual Studio (not yet tested):
 
-```
-  cd build
-  qmake -tp vc ../src/hello-googlemock.pro	# should create Visual Studio project!?
-```
+    cd build
+    qmake -tp vc ../src/hello-googlemock.pro	# should create Visual Studio project!?
 
 ## Building the application and the unit test program:
-```
-  cd build      # only if not already there
-  make          # generates all
-  ./helloworld  # enjoy the famous program
-  ./unit-test   #
-  make clean    # optionally, remove all temporary files
-```
+    cd build      # only if not already there
+    make          # generates all
+    ./helloworld  # enjoy the famous program
+    ./unit-test   #
+    make clean    # optionally, remove all temporary files
 
 ## Cleaning the build directory:
 - initially the build directory is empty, so all files there are
@@ -61,8 +117,6 @@ Visual Studio (not yet tested):
   can safely remove all files by using rm
 - alternatively, just remove the files built by 'make':
 
-```
-  cd build		# only if not already there
-  make clean		# optionally, remove all temporary files
-  make distclean	# as clean, but removes also libs and Makefiles
-```
+      cd build		# only if not already there
+      make clean		# optionally, remove all temporary files
+      make distclean		# as clean, but removes also libs and Makefiles
