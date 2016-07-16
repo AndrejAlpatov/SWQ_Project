@@ -30,16 +30,12 @@ Google Mock.
 This project may be used to start "real" projects just by cloning the
 repository and replacing / extending the necessary parts.
 
-\section s_contents Table of Contents
-\li \ref s_intro
+\section s_contents Table of Contents / Modules
 \li \ref g_main
 \li \ref g_applib
 \li \ref g_unittests
 \li \ref s_links
 \li \ref p_license
-
-\section s_intro Introduction
-\todo write introduction
 
 \section s_links Links
 

@@ -10,6 +10,7 @@ CONFIG += staticlib
 
 HEADERS += app-lib.h
 SOURCES += app-lib.cpp
+OTHER_FILES += applib.dox
 
 # Currently qmake (version 3.0) does not remove a library
 # target if the destination directory is not the build directory,
