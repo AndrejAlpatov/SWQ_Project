@@ -14,7 +14,7 @@ based C++ project.
 - Hello Googlemock Project
   - [Intention](#intention)
   - [Features](#features)
-  - [Quickstart](#quickstart)
+  - [For Starters](#forstarters)
   - [Links](#links)
   - [License](#license)
 - [Project Structure](#projectstructure)
@@ -32,8 +32,10 @@ based C++ project.
 
 ## Intention<a name=intention></a>
 
-- simple project base
-- Google Mock evalation environment
+This project was intended to provide a **simple project base** for C++
+projects using QtCreator. It includes all settings to start with unit
+testing, especially usable to learn and evaluate the **Google Test** and
+**Google Mock** testing environments.
 
 ## Features<a name=features></a>
 
@@ -44,27 +46,85 @@ based C++ project.
 - GoogleMock supporting
 - Open Source License (GPLv3)
 
-## Quickstart<a name=quickstart></a>
+## For Starters<a name=forstarters></a>
+You want to enhance this base project, or you want to use it as base of your
+new project. In any case, you should get a basic knowledge of the project's
+structure and of the used tools.
+
+1. Read this [README](README.md) from top to bottom.
+2. Try to [build the project](#buildinstructions) by yourself.
+3. Check the [code documentation](#documentation).
+4. Complete your knowledge about the used tools as necessary, see e.g. the
+   [links](#links).
+
+It would be nice if you could record the time you spent for some of these
+activities and to add a time estimate to the items above.
 
 ## Links<a name=links></a>
 - [Project Home](
   https://atlas.ai.it.hs-worms.de/bitbucket/projects/TST/repos/googlemock-hello)
 - [Qt](http://www.qt.io)
+- [Git](https://git-scm.com/)
 - [Google Test & Google Mock](https://github.com/google/googletest)
 - [Doxygen](http://www.stack.nl/~dimitri/doxygen)
-- [Git](https://git-scm.com/)
+- [Markdown Syntax](http://daringfireball.net/projects/markdown/syntax)
+- [C++ Reference](http://en.cppreference.com/w/cpp)
 
 ## License<a name=license></a>
-- Code: GPLv3
-- Documentation: CC BY SA
+If not mentioned otherwise in the files, the following licenses are used:
+- Soure Code: [GPLv3](LICENSE.txt)
+- Documentation: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 --------------------------------------------------------------
 
 # Project Structure<a name=projectstructure></a>
+This is only a very short overview on the project structure. In case you need
+more explanation, feel free to ask and to add additional hints here :-)
 
 ## Directories<a name=directories></a>
 
+* `bin/` contains some build and code generation shell scripts
+* `build/` is initially empty (except of a `.gitignore` file) and is used as
+  build directory, so that the build artefacts don't upset the source
+  directories
+* `doc/` holds some Doxygen configuration and principal documentation files,
+  while most of the Doxygen texts are comments inside the source code files
+* `src/` contains the project's `qmake` configuration file
+  `hello-googlemock.pro` and several subdirectories with source code and
+  unit tests:
+* `src/app-lib/` - the largest source code part
+* `src/app-main/` - a small application main routine
+* `src/googletest/` - the [GoogleTest](https://github.com/google/googletest)
+  framework code
+* `src/qmake/` - additional `qmake` configuration files included by others
+* `src/unittest/` - the Unit Test source code
+
 ## Documentation<a name=documentation></a>
+
+The documentation is consisting of two parts mainly:
+
+1. This [README.md](README.md) overview documentation written in
+   [Markdown](http://daringfireball.net/projects/markdown/syntax). It is
+   simply readable as text file, but more beautiful when viewed in the
+   browser.
+
+   The version in the git repository is probably viewed via some source code
+   browser as Bitbucket or Github which interprete the Markdown syntax.
+
+   When working on the file, it may be helpful to use e.g. the *Markdown
+   Viewer* plugin for Firefox or similar, so the browser itself can render the
+   Markdown files.
+
+2. Googletest documentation is also available as Markdown in
+   [src/googletest/README.md](src/googletest/README.md)
+
+3. Code documentation built by Doxygen. This is the main documentation.
+
+   Either view it at the [Jenkins build
+   server](https://ci.kom-labor.it.fh-worms.de/jenkins/job/googlemock-hello_all-branches/doxygen/)
+   (our's is reachable via VPN only, sorry), or you install the doxygen tool
+   on your machine and run `bin/run-doxygen`; then the documentation will be
+   available in [build/html](build/html/index.html).
 
 --------------------------------------------------------------
 
@@ -72,12 +132,12 @@ based C++ project.
 
 ## Prerequisites:<a name=prerequisites></a>
 - QT 5.2 or later
-  - download version for your environment from
-    http://www.qt.io/download-open-source/
+  - download the suitable version for your environment at
+    <http://www.qt.io/download-open-source/>
 
 ## Installing QT:<a name=installingqt></a>
 This is only one way that worked on Ubuntu 14.04 - if in doubt, follow
-the instructions on http://qt-project.org
+the instructions on <http://www.qt.io>
 
 - E.g. download the Qt Online Installer for Linux (32-bit or 64-bit,
   depending on your system); for me (with Qt 5.1), the file name was
