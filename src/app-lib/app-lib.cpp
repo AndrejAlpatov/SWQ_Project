@@ -1,7 +1,10 @@
 //============================================================================
-// Name           : app-lib.cpp
+/// \addtogroup g_applib
+/// \{
+/// \file
+/// Contains the application library implementation.
+//
 // Copyright      : GNU General Public License (GPL) Version 3
-// Description    : application library implementation
 //============================================================================
 
 #include "app-lib.h"
@@ -19,3 +22,5 @@ QString VersionInfo::getBuildTag()
 {
     return buildTag;
 }
+
+/// \}  // end of g_applib
