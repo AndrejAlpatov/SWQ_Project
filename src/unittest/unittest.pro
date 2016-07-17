@@ -11,13 +11,19 @@ CONFIG -= app_bundle    # for Mac users
 CONFIG += testcase      # adds make target for 'make check'
 
 HEADERS += \
-    AutoTest.h \
     Helpers.h
 
 SOURCES += \
     testmain.cpp \
     testVersionInfo.cpp \
-    testQttestBehaviour.cpp
+    testGoogleTestBehaviour.cpp \
+    testGoogleMockBehaviour.cpp
 
-DEPENDENCY_LIBRARIES += app-lib         # used in includes.pri
+OTHER_FILES += unittest.dox
+
+INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
+    $$_PRO_FILE_PWD_/../googletest/googletest/include \
+
+DEPENDENCY_LIBRARIES += googletest \    # used in includes.pri
+    app-lib
 include(../qmake/includes.pri)
