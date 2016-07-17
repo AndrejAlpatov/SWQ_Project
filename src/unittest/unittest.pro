@@ -19,6 +19,8 @@ SOURCES += \
     testGoogleTestBehaviour.cpp \
     testGoogleMockBehaviour.cpp
 
+OTHER_FILES += unittest.dox
+
 INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
     $$_PRO_FILE_PWD_/../googletest/googletest/include \
 

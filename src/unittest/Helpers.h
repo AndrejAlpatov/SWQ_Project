@@ -1,6 +1,9 @@
 //============================================================================
+/// \addtogroup g_unittests
+/// \{
+/// \file
+/// Test helper functions.
 // Copyright   : This file is in the public domain
-// Description : Helper functions
 //============================================================================
 
 #ifndef HELPERS_H
@@ -9,6 +12,9 @@
 #include <QString>
 
 namespace Helpers {
+
+    /// Tests whether each character inside str is printable.
+    inline
     bool isPrintable(const QString &str) {
         for(auto ch: str)
             if( ! ch.isPrint() )
@@ -18,27 +24,5 @@ namespace Helpers {
     }
 }
 
-#include <gtest/gtest.h>
-// add googletest helpers for QString
-namespace testing {
-    namespace internal {
-        // Helper function for *_STREQ on QStrings.
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const char* expected,
-                                       const QString & actual) {
-            if (expected == actual.toStdString()) {
-                return AssertionSuccess();
-            }
-
-            return EqFailure(expected_expression,
-                             actual_expression,
-                             PrintToString(expected),
-                             PrintToString(actual.toStdString()),
-                             false);
-        }
-    }
-}
-
 #endif // HELPERS_H
+/// \} // end g_unittests

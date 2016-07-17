@@ -9,6 +9,7 @@ CONFIG += console
 CONFIG -= app_bundle
 
 SOURCES += app-main.cpp
+OTHER_FILES += appmain.dox
 
 DEPENDENCY_LIBRARIES += app-lib         # used in includes.pri
 include(../qmake/includes.pri)

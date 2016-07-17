@@ -1,9 +1,13 @@
 //============================================================================
+/// \addtogroup g_unittests
+/// \{
+/// \file
+/// Test googletest framework behaviour.
 // Copyright   : This file is in the public domain
-// Description : test googletest framework behaviour
 //============================================================================
 
-#include "gtest/gtest.h"
+#include "Helpers.h"
+#include <gtest/gtest.h>
 #include <iostream>
 using namespace std;
 
@@ -69,3 +73,5 @@ TEST_F(GoogleTest, Test2) {
     ASSERT_EQ(0, someAttributeWhichIsUsedInTestCases);
     ASSERT_EQ(2, objectNumber);
 }
+
+/// \} // end g_unittests

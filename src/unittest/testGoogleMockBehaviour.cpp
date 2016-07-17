@@ -1,6 +1,9 @@
 //============================================================================
+/// \addtogroup g_unittests
+/// \{
+/// \file
+/// Test googlemock framework behaviour.
 // Copyright   : This file is in the public domain
-// Description : test googlemock framework behaviour
 //============================================================================
 
 #include "gtest/gtest.h"
@@ -93,3 +96,5 @@ TEST(anotherSomeThing, callsHelperA) {
 
     (void) someThing.go();
 }
+
+/// \} // end g_unittests
