@@ -97,6 +97,7 @@ more explanation, feel free to ask and to add additional hints here :-)
 * `src/googletest/` - the [GoogleTest](https://github.com/google/googletest)
   framework code
 * `src/qmake/` - additional `qmake` configuration files included by others
+* `src/resources/` - translations and optionally other resources
 * `src/unittest/` - the Unit Test source code
 
 ## Documentation<a name=documentation></a>
