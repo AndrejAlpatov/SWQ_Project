@@ -17,7 +17,9 @@ SOURCES += \
     testmain.cpp \
     testVersionInfo.cpp \
     testGoogleTestBehaviour.cpp \
-    testGoogleMockBehaviour.cpp
+    testGoogleMockBehaviour.cpp \
+    testTranslation.cpp \
+
 
 OTHER_FILES += unittest.dox
 

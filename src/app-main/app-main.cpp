@@ -2,24 +2,41 @@
 /// \addtogroup g_main
 /// \{
 /// \file
-/// Contains the application's main function.
-//
-// Copyright:   GNU General Public License (GPL) Version 3
+/// \brief Contains the application's main function.
+/// We use a Qt QCoreApplication here (i.e. without GUI) and just demonstrate
+/// internationalization (i18n) by translating the welcome strings.
+///
+/// \copyright GNU General Public License (GPL) Version 3
 //============================================================================
 
 #include "app-lib.h"
+#include <QCoreApplication>
+#include <QTranslator>
+#include <QLocale>
 #include <iostream>
 using namespace std;
 
 /// Our little main() function.
-/// Not much is happening here, it's just a "hello world". We do not even
-/// create objects here, we just call some static class member functions,
-/// as you can see here:
-int main()
+/// Not much is happening here, it's just a "hello world". We just
+/// create a QCoreApplication and a Translator object here and say
+/// "hello" (but in the current system locale).
+int main( int argc, char ** argv )
 {
-	cout << "Hello Application World!" << endl
-             << "Version: " << VersionInfo::getVersion().toStdString()
-             << " (" << VersionInfo::getBuildTag().toStdString() << ")" << endl;
+    QCoreApplication app(argc, argv);
+    QTranslator translator;
+    QString localeName = QLocale::system().name();
+
+    if( ! translator.load(":/translations/" + localeName) ) {
+        cerr << "Sorry, could not load translation for <" << localeName.toStdString() << ">" << endl;
+    }
+    if( ! app.installTranslator(&translator) ) {
+        cerr << "Sorry, could not install translator for <" << localeName.toStdString() << ">" << endl;
+    }
+
+    QString hello = QObject::tr("Hello Application World!");
+    cout <<  hello.toStdString() << endl
+          << "Version: " << VersionInfo::getVersion().toStdString()
+          << " (" << VersionInfo::getBuildTag().toStdString() << ")" << endl;
 }
 
 /// \}  // end of g_main
