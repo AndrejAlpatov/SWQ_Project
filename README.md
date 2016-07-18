@@ -27,6 +27,7 @@ based C++ project.
   - [Preparations](#preparations)
   - [Building the application and the unit test program](#building)
   - [Cleaning the build directory](#cleaning)
+- [Translation](#translation)
 
 --------------------------------------------------------------
 
@@ -185,4 +186,39 @@ Visual Studio (not yet tested):
       cd build		# only if not already there
       make clean		# optionally, remove all temporary files
       make distclean		# as clean, but removes also libs and Makefiles
+
+--------------------------------------------------------------
+
+# Translation<a name=translation></a>
+The application is prepared for localization (*l10n*) using Qt's
+internationalization (*i18n*) mechanisms and tools.
+
+For details, see the [Qt Linguist
+Manual](http://doc.qt.io/qt-5/qtlinguist-index.html).
+
+The basic steps are as follows:
+
+1. The programmer marks all translatable strings in the program by calls
+   to `tr()`.
+2. Inside QtCreator, you may collect these marks by executing
+   `Tools`->`External`->`Linguist`->`lupdate` which adds the newly
+   found marks to the `src/resources/translations/*.ts` files (these
+   are XML files).
+3. Start the GUI tool `linguist`, preferrably with all `*.ts` files
+   together: `linguist src/resources/translations/*.ts`
+4. In `linguist`, provide the translations to the different languages,
+   and save the files.
+5. The build process will automatically transform the XML style `*.ts`
+   files into binary `*.qm` files (using the tool `lrelease`) and make
+   them part of the compiled in resources.
+6. The newly built programm will now find the translations just via the
+   `tr()` calls of the first step - depending on the selected language.
+   You may test the behaviour by starting the application with different
+   language settings, e.g. 
+   * `LANGUAGE=fr_FR build/*/helloworld`
+   * `LANGUAGE=de_DE build/*/helloworld`
+   * `LANGUAGE=en_US build/*/helloworld`
+7. Commit the changes (especially the `*.ts` translations) as usual. The
+   `*.qm` binary files are not part of the git repository, they will be
+   rebuilt as necessary.
 
