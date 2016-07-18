@@ -4,12 +4,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../unittest/testTranslation.cpp" line="+20"/>
-        <location line="+15"/>
-        <location line="+14"/>
-        <location line="+14"/>
+        <location filename="../../unittest/testTranslation.cpp" line="+23"/>
+        <location line="+26"/>
+        <location line="+10"/>
+        <location line="+10"/>
         <source>Welcome!</source>
         <translation>Bienvenue!</translation>
+    </message>
+    <message>
+        <location filename="../../app-main/app-main.cpp" line="+36"/>
+        <source>Hello Application World!</source>
+        <translation type="unfinished">Bonjour au monde des applications!</translation>
     </message>
 </context>
 </TS>
