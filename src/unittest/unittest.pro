@@ -21,7 +21,7 @@ SOURCES += \
 
 OTHER_FILES += unittest.dox
 
-RESOURCES += ../../resources/resources.qrc
+include(../qmake/resources.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
     $$_PRO_FILE_PWD_/../googletest/googletest/include \

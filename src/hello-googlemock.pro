@@ -15,8 +15,3 @@ OTHER_FILES = ../README.md \
     ../doc/doxygen/mainpage.dox \
     ../doc/doxygen/license.dox \
 
-TRANSLATIONS += ../resources/translations/de_DE.ts \
-                ../resources/translations/fr_FR.ts \
-		../resources/translations/en_US.ts
-
-OTHER_FILES += $$TRANSLATIONS
