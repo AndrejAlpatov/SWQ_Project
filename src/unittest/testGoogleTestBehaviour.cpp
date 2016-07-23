@@ -1,9 +1,8 @@
 //============================================================================
-/// \addtogroup g_unittests
-/// \{
 /// \file
-/// Test googletest framework behaviour.
-// Copyright   : This file is in the public domain
+/// \ingroup    g_unittests
+/// \brief      Test googletest framework behaviour.
+/// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
 #include "Helpers.h"
@@ -11,6 +10,8 @@
 #include <iostream>
 using namespace std;
 
+/// The test fixture to examine the behaviour of the Google Test framework.
+/// Study the outputs when the test is executed.
 class GoogleTest : public testing::Test {
     public:
         GoogleTest()
@@ -59,6 +60,7 @@ class GoogleTest : public testing::Test {
 };
 int GoogleTest::objectCount = 0;
 
+/// \test Run the first test using the GoogleTest fixture.
 TEST_F(GoogleTest, Test1) {
     cout << "[  ?  ?  ? ] inside Test1 with fixture object " << objectNumber << endl;
 
@@ -68,10 +70,10 @@ TEST_F(GoogleTest, Test1) {
     ASSERT_EQ(1, objectNumber);
 }
 
+/// \test Run the second test using the GoogleTest fixture.
+/// It checks whether a fresh new test object was created to run this method.
 TEST_F(GoogleTest, Test2) {
     cout << "[  ?  ?  ? ] inside Test2 with fixture object " << objectNumber << endl;
     ASSERT_EQ(0, someAttributeWhichIsUsedInTestCases);
     ASSERT_EQ(2, objectNumber);
 }
-
-/// \} // end g_unittests

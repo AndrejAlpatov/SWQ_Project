@@ -1,9 +1,8 @@
 //============================================================================
-/// \addtogroup g_unittests
-/// \{
 /// \file
-/// \brief      Test Qt Translation System.
-/// \copyright  GPLv3
+/// \ingroup    g_unittests
+/// \brief      Test the Qt Translation System.
+/// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
 #include "Helpers.h"
@@ -70,5 +69,3 @@ TEST_F(TestTranslation,toFrench) {
 
     EXPECT_STREQ( welcome, "Bienvenue!" );
 }
-
-/// \} // end g_unittests

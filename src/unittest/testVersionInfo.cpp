@@ -1,9 +1,8 @@
 //============================================================================
-/// \addtogroup g_unittests
-/// \{
 /// \file
-/// Test accessing the generated version information.
-// Copyright   : This file is in the public domain
+/// \ingroup    g_unittests
+/// \brief      Test accessing the generated version information.
+/// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
 #include "Helpers.h"
@@ -13,7 +12,7 @@
 
 using namespace std;
 
-/// \test
+/// \test VersionInfo::getVersion() returns a non-empty string
 TEST(VersionInfo,getVersionIsNotEmpty) {
     QString version = VersionInfo::getVersion();
     cout << "[          ] Version: " << version.toStdString() << endl;
@@ -21,25 +20,23 @@ TEST(VersionInfo,getVersionIsNotEmpty) {
     ASSERT_FALSE( version.isEmpty() );
 }
 
-/// \test
+/// \test VersionInfo::getVersion() returns a printable string
 TEST(VersionInfo,getVersionIsPrintable) {
     QString version = VersionInfo::getVersion();
 
     ASSERT_TRUE( Helpers::isPrintable(version) );
 }
 
-/// \test
+/// \test VersionInfo::getBuildTag() returns a non-empty string
 TEST(VersionInfo,getBuildTagIsNotEmpty) {
     QString buildTag = VersionInfo::getBuildTag();
 
     ASSERT_FALSE( buildTag.isEmpty() );
 }
 
-/// \test
+/// \test VersionInfo::getBuildTag() returns a printable string
 TEST(VersionInfo,getBuildTagIsPrintable) {
     QString buildTag = VersionInfo::getBuildTag();
 
     ASSERT_TRUE( Helpers::isPrintable(buildTag) );
 }
-
-/// \} // end g_unittests
