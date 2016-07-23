@@ -163,20 +163,20 @@ namespace testing {
         // Helper functions for {ASSERT|EXPECT}_{EQ|NE} on nullptr_t.
         template <>
         inline
-        AssertionResult CmpHelperEQ<long int, nullptr_t>
+        AssertionResult CmpHelperEQ<long int, std::nullptr_t>
                                     (const char* lhs_expression,
                                     const char* rhs_expression,
                                     const long int & lhs,
-                                    const nullptr_t & ) {
+                                    const std::nullptr_t & ) {
             return CmpHelperEQ(lhs_expression, rhs_expression, lhs, 0);
         }
         template <>
         inline
-        AssertionResult CmpHelperNE<long int, nullptr_t>
+        AssertionResult CmpHelperNE<long int, std::nullptr_t>
                                     (const char* lhs_expression,
                                     const char* rhs_expression,
                                     const long int & lhs,
-                                    const nullptr_t & ) {
+                                    const std::nullptr_t & ) {
             return CmpHelperNE(lhs_expression, rhs_expression, lhs, 0);
         }
         // Helper functions for {ASSERT|EXPECT}_{EQ|NE} on shared_ptr<> vs. nullptr_t.
@@ -185,7 +185,7 @@ namespace testing {
         AssertionResult CmpHelperEQ(const char* lhs_expression,
                                     const char* rhs_expression,
                                     const std::shared_ptr<T> & lhs,
-                                    const nullptr_t & rhs) {
+                                    const std::nullptr_t & rhs) {
             return CmpHelperEQ(lhs_expression, rhs_expression, lhs.get(), rhs);
         }
         template <typename T>
@@ -193,7 +193,7 @@ namespace testing {
         AssertionResult CmpHelperNE(const char* lhs_expression,
                                     const char* rhs_expression,
                                     const std::shared_ptr<T> & lhs,
-                                    const nullptr_t & rhs) {
+                                    const std::nullptr_t & rhs) {
             return CmpHelperNE(lhs_expression, rhs_expression, lhs.get(), rhs);
         }
     }
