@@ -1,9 +1,8 @@
 //============================================================================
-/// \addtogroup g_unittests
-/// \{
 /// \file
-/// Test googlemock framework behaviour.
-// Copyright   : This file is in the public domain
+/// \ingroup    g_unittests
+/// \brief      Test googlemock framework behaviour.
+/// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
 #include "gtest/gtest.h"
@@ -14,8 +13,8 @@ using namespace testing;
 using namespace std;
 
 //============================================================================
-// This is the "production code" class, which shall be replaced by a mock.
-// Usually, this class will be in a header file which can be included here.
+/// This is the "production code" class, which shall be replaced by a mock.
+/// Usually, this class will be in a header file which can be included here.
 //============================================================================
 class SomeHelper {
     public:
@@ -40,9 +39,9 @@ class SomeHelper {
 };
 
 //============================================================================
-// This is the "production code" class, which shall be tested.
-// Usually, this class will be in a header file which can be included here.
-// This class uses SomeHelper.
+/// This is the "production code" class, which shall be tested.
+/// Usually, this class will be in a header file which can be included here.
+/// This class uses the SomeHelper object which is injected via the constructor.
 //============================================================================
 class SomeThing {
     public:
@@ -60,16 +59,16 @@ class SomeThing {
 };
 
 //============================================================================
-// This is the mock of SomeHelper
+/// This is the mock of SomeHelper.
 //============================================================================
 class MockOfSomeHelper : public SomeHelper {
     public:
         MOCK_METHOD0(a, void());
-        MOCK_CONST_METHOD1(b, int(int));  // unfortunately QtCreator's editor marks this as error
+        MOCK_CONST_METHOD1(b, int(int)); // Unfortunately QtCreator doubts about this syntax.
 };
 
 //============================================================================
-// This is the test fixture, and also gives the name prefix for the tests
+/// This is the test fixture, and it also gives the name prefix for the tests.
 //============================================================================
 class aSomeThing : public ::testing::Test {
     protected:
@@ -81,6 +80,8 @@ class aSomeThing : public ::testing::Test {
         SomeThing someThing;
 };
 
+/// \test Test that SomeThing::go() calls SomeHelper::a() and SomeHelper::b().
+/// The initialization of someThing is done in the test fixture aSomeThing.
 TEST_F(aSomeThing, callsHelperAandReturnsValOfB) {
     EXPECT_CALL(helperMock, a());
     EXPECT_CALL(helperMock, b(_))
@@ -89,6 +90,10 @@ TEST_F(aSomeThing, callsHelperAandReturnsValOfB) {
     ASSERT_EQ(3, someThing.go());
 }
 
+/// \test Test that SomeThing::go() calls SomeHelper::a().
+/// Essentially the same as in the test above, but using NiceMock which allows
+/// calls of "uninteresting" calls. See the Google Mock documentation for
+/// details on it's behaviour.
 TEST(anotherSomeThing, callsHelperA) {
     NiceMock<MockOfSomeHelper> niceHelperMock;
     SomeThing someThing(niceHelperMock);
@@ -96,5 +101,3 @@ TEST(anotherSomeThing, callsHelperA) {
 
     (void) someThing.go();
 }
-
-/// \} // end g_unittests
