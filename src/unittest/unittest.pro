@@ -17,9 +17,13 @@ SOURCES += \
     testmain.cpp \
     testVersionInfo.cpp \
     testGoogleTestBehaviour.cpp \
-    testGoogleMockBehaviour.cpp
+    testGoogleMockBehaviour.cpp \
+    testTranslation.cpp \
+
 
 OTHER_FILES += unittest.dox
+
+include(../qmake/resources.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
     $$_PRO_FILE_PWD_/../googletest/googletest/include \
