@@ -5,7 +5,7 @@
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
-#include "VersionInfo.h"
+#include "app-lib/VersionInfo.h"
 #include "Helpers.h"
 #include <gtest/gtest.h>
 #include <iostream>

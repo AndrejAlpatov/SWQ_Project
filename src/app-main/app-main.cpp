@@ -9,7 +9,7 @@
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
-#include "app-lib.h"
+#include "app-lib/app-lib.h"
 #include <QCoreApplication>
 #include <QTranslator>
 #include <QLocale>

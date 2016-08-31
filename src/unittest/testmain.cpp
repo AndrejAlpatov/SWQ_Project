@@ -7,7 +7,7 @@
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
 /// The unit test main() function.
 /// Not much to do here, just init Google Mock (which also inits Google Test)
