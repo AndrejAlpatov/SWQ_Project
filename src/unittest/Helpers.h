@@ -96,6 +96,40 @@ namespace testing {
             return CmpHelperSTRNE(expected_expression, actual_expression, expected, actual.c_str());
         }
 
+        // Helper functions for ASSERT_STREQ / EXPECT_STREQ of wchar_t* with std::wstrings.
+        inline
+        AssertionResult CmpHelperSTREQ(const char* expected_expression,
+                                       const char* actual_expression,
+                                       const std::wstring & expected,
+                                       const wchar_t* actual) {
+            return CmpHelperSTREQ(expected_expression, actual_expression, expected.c_str(), actual);
+        }
+
+        inline
+        AssertionResult CmpHelperSTREQ(const char* expected_expression,
+                                       const char* actual_expression,
+                                       const wchar_t* expected,
+                                       const std::wstring & actual) {
+            return CmpHelperSTREQ(expected_expression, actual_expression, expected, actual.c_str());
+        }
+
+        // Helper functions for ASSERT_STRNE / EXPECT_STRNE of char* with std::strings.
+        inline
+        AssertionResult CmpHelperSTRNE(const char* expected_expression,
+                                       const char* actual_expression,
+                                       const std::wstring & expected,
+                                       const wchar_t* actual) {
+            return CmpHelperSTRNE(expected_expression, actual_expression, expected.c_str(), actual);
+        }
+
+        inline
+        AssertionResult CmpHelperSTRNE(const char* expected_expression,
+                                       const char* actual_expression,
+                                       const wchar_t* expected,
+                                       const std::wstring & actual) {
+            return CmpHelperSTRNE(expected_expression, actual_expression, expected, actual.c_str());
+        }
+
         // Helper functions for {ASSERT|EXPECT}_{EQ|NE} on nullptr_t.
         template <>
         inline
@@ -136,10 +170,52 @@ namespace testing {
     }
 }
 
+/// Comparison between QString and std::string
+inline
+bool operator==(const QString & q, const std::string & s) {
+    return q.toStdString() == s;
+}
+
+inline
+bool operator==(const std::string & s, const QString & q) {
+    return q.toStdString() == s;
+}
+
+inline
+bool operator!=(const QString & q, const std::string & s) {
+    return q.toStdString() != s;
+}
+
+inline
+bool operator!=(const std::string & s, const QString & q) {
+    return q.toStdString() != s;
+}
+
+/// Comparison between QString and std::wstring
+inline
+bool operator==(const QString & q, const std::wstring & s) {
+    return q.toStdWString() == s;
+}
+
+inline
+bool operator==(const std::wstring & s, const QString & q) {
+    return q.toStdWString() == s;
+}
+
+inline
+bool operator!=(const QString & q, const std::wstring & s) {
+    return q.toStdWString() != s;
+}
+
+inline
+bool operator!=(const std::wstring & s, const QString & q) {
+    return q.toStdWString() != s;
+}
+
 /// Google Test Print Function for QString
 inline
 void PrintTo (const QString & s, ::std::ostream * os) {
-    *os << s.toStdString();
+    *os << '"' << s.toStdString() << '"';
 }
 
 #endif // HELPERS_H
