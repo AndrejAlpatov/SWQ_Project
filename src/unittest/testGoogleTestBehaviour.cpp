@@ -77,3 +77,84 @@ TEST_F(GoogleTest, Test2) {
     ASSERT_EQ(0, someAttributeWhichIsUsedInTestCases);
     ASSERT_EQ(2, objectNumber);
 }
+
+/// \test Compare char* with std::string
+TEST(ExpectStreq, canCompareCharPointerWithString) {
+    const char * charPointer = "Hello String";
+    std::string stdString(charPointer);
+    // try this and watch error output:
+    // stdString += "Oops";
+
+    EXPECT_STREQ(stdString, charPointer);
+    EXPECT_STREQ(charPointer, stdString);
+    EXPECT_STRNE(stdString, charPointer+1);
+    EXPECT_STRNE(charPointer+1, stdString);
+}
+
+/// \test Compare two wchar_t*
+TEST(ExpectStreq, canCompareWCharPointers) {
+    const wchar_t * wcharPointer1 = L"Hello String äöüß €©";
+    const wchar_t * wcharPointer2 = wcharPointer1;
+
+    // try this and watch error output:
+    // wcharPointer2++;
+
+    EXPECT_STREQ(wcharPointer1, wcharPointer2);
+    EXPECT_STRNE(wcharPointer1, wcharPointer2+1);
+}
+
+/// \test Compare wchar_t* with std::wstring
+TEST(ExpectStreq, canCompareWCharPointerWithWString) {
+    const wchar_t * wcharPointer = L"Hello String äöüß €©";
+    std::wstring stdWString(wcharPointer);
+    // try this and watch error output:
+    // stdWString += L"Oops";
+
+    EXPECT_STREQ(stdWString, wcharPointer);
+    EXPECT_STREQ(wcharPointer, stdWString);
+    EXPECT_STRNE(stdWString, wcharPointer+1);
+    EXPECT_STRNE(wcharPointer+1, stdWString);
+}
+
+/// \test Compare char* with QString
+TEST(ExpectStreq, canCompareCharPointerWithQString) {
+    const char * charPointer = "Hello String";
+    QString qString(charPointer);
+    // try this and watch error output:
+    // qString += "Oops";
+
+    EXPECT_STREQ(qString, charPointer);
+    EXPECT_STREQ(charPointer, qString);
+    EXPECT_STRNE(qString, charPointer+1);
+    EXPECT_STRNE(charPointer+1, qString);
+}
+
+/// \test Compare std::string with Qstring
+TEST(ExpectEq, canCompareStringWithQString) {
+    const char * hello = "Hello String";
+    std::string stdString(hello);
+    QString qString(hello);
+    // try this and watch error output:
+    // qString += "Oops";
+
+    // Note: do not use EXPECT_STREQ here!!
+    EXPECT_EQ(qString, stdString);
+    EXPECT_EQ(stdString, qString);
+    EXPECT_NE(qString, stdString+"a");
+    EXPECT_NE(stdString, qString+"a");
+}
+
+/// \test Compare std::string with Qstring
+TEST(ExpectEq, canCompareWStringWithQString) {
+    const wchar_t * hello = L"Hello String ©€";
+    std::wstring stdWString(hello);
+    QString qString = QString::fromStdWString(hello);
+    // try this and watch error output:
+    // qString += "Oops";
+
+    // Note: do not use EXPECT_STREQ here!!
+    EXPECT_EQ(qString, stdWString);
+    EXPECT_EQ(stdWString, qString);
+    EXPECT_NE(qString+"a", stdWString);
+    EXPECT_NE(stdWString+L"a", qString);
+}
