@@ -28,107 +28,23 @@ namespace Helpers {
 // additional googletest helpers for QString, string and nullptr_t
 namespace testing {
     namespace internal {
-        // Helper functions for ASSERT_STREQ / EXPECT_STREQ of char* with QStrings.
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const char* expected,
-                                       const QString & actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected, actual.toUtf8().data());
+        // Just copied from gtest.h and used for QString too:
+        // If a C string is compared with an STL string object, we know it's meant
+        // to point to a NUL-terminated string, and thus can print it as a string.
+#define GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(CharType, OtherStringType)      \
+        template <>                                                           \
+        class FormatForComparison<CharType*, OtherStringType> {               \
+          public:                                                             \
+            static ::std::string Format(CharType* value) {                    \
+              return ::testing::PrintToString(value);                         \
+            }                                                                 \
         }
+        GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(char, QString);
+        GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(const char, QString);
+        GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(wchar_t, QString);
+        GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(const wchar_t, QString);
+#undef GTEST_IMPL_FORMAT_C_STRING_AS_STRING_
 
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const QString & expected,
-                                       const char* actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected.toUtf8().data(), actual);
-        }
-
-        // Helper functions for ASSERT_STRNE / EXPECT_STRNE of char* with QStrings.
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const char* expected,
-                                       const QString & actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected, actual.toUtf8().data());
-        }
-
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const QString & expected,
-                                       const char* actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected.toUtf8().data(), actual);
-        }
-
-        // Helper functions for ASSERT_STREQ / EXPECT_STREQ of char* with std::strings.
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const std::string & expected,
-                                       const char* actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected.c_str(), actual);
-        }
-
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const char* expected,
-                                       const std::string & actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected, actual.c_str());
-        }
-
-        // Helper functions for ASSERT_STRNE / EXPECT_STRNE of char* with std::strings.
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const std::string & expected,
-                                       const char* actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected.c_str(), actual);
-        }
-
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const char* expected,
-                                       const std::string & actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected, actual.c_str());
-        }
-
-        // Helper functions for ASSERT_STREQ / EXPECT_STREQ of wchar_t* with std::wstrings.
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const std::wstring & expected,
-                                       const wchar_t* actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected.c_str(), actual);
-        }
-
-        inline
-        AssertionResult CmpHelperSTREQ(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const wchar_t* expected,
-                                       const std::wstring & actual) {
-            return CmpHelperSTREQ(expected_expression, actual_expression, expected, actual.c_str());
-        }
-
-        // Helper functions for ASSERT_STRNE / EXPECT_STRNE of char* with std::strings.
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const std::wstring & expected,
-                                       const wchar_t* actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected.c_str(), actual);
-        }
-
-        inline
-        AssertionResult CmpHelperSTRNE(const char* expected_expression,
-                                       const char* actual_expression,
-                                       const wchar_t* expected,
-                                       const std::wstring & actual) {
-            return CmpHelperSTRNE(expected_expression, actual_expression, expected, actual.c_str());
-        }
 
         // Helper functions for {ASSERT|EXPECT}_{EQ|NE} on nullptr_t.
         template <>

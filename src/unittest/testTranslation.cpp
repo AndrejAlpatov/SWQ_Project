@@ -21,7 +21,7 @@ TEST(Translation,withoutTranslator) {
     // are derived from QObject, which is usually so for GUI classes.
     QString welcome = QObject::tr("Welcome!");
 
-    EXPECT_STREQ( welcome, "Welcome!" );
+    EXPECT_EQ( welcome, "Welcome!" );
 }
 
 
@@ -47,7 +47,7 @@ TEST_F(TestTranslation,toGerman) {
 
     QString welcome = QObject::tr("Welcome!");
 
-    EXPECT_STREQ( welcome, "Willkommen!" );
+    EXPECT_EQ( welcome, "Willkommen!" );
 }
 
 /// \test Given an English Translator, when we call tr() we expect to get an english string.
@@ -57,7 +57,7 @@ TEST_F(TestTranslation,toEnglish) {
 
     QString welcome = QObject::tr("Welcome!");
 
-    EXPECT_STREQ( welcome, "Welcome!" );
+    EXPECT_EQ( welcome, "Welcome!" );
 }
 
 /// \test Given a French Translator, when we call tr() we expect to get a french string.
@@ -67,5 +67,5 @@ TEST_F(TestTranslation,toFrench) {
 
     QString welcome = QObject::tr("Welcome!");
 
-    EXPECT_STREQ( welcome, "Bienvenue!" );
+    EXPECT_EQ( welcome, "Bienvenue!" );
 }

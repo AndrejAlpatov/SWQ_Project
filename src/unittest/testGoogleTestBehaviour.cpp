@@ -79,16 +79,16 @@ TEST_F(GoogleTest, Test2) {
 }
 
 /// \test Compare char* with std::string
-TEST(ExpectStreq, canCompareCharPointerWithString) {
+TEST(ExpectEq, canCompareCharPointerWithString) {
     const char * charPointer = "Hello String";
     std::string stdString(charPointer);
     // try this and watch error output:
     // stdString += "Oops";
 
-    EXPECT_STREQ(stdString, charPointer);
-    EXPECT_STREQ(charPointer, stdString);
-    EXPECT_STRNE(stdString, charPointer+1);
-    EXPECT_STRNE(charPointer+1, stdString);
+    EXPECT_EQ(stdString, charPointer);
+    EXPECT_EQ(charPointer, stdString);
+    EXPECT_NE(stdString, charPointer+1);
+    EXPECT_NE(charPointer+1, stdString);
 }
 
 /// \test Compare two wchar_t*
@@ -104,32 +104,32 @@ TEST(ExpectStreq, canCompareWCharPointers) {
 }
 
 /// \test Compare wchar_t* with std::wstring
-TEST(ExpectStreq, canCompareWCharPointerWithWString) {
+TEST(ExpectEq, canCompareWCharPointerWithWString) {
     const wchar_t * wcharPointer = L"Hello String äöüß €©";
     std::wstring stdWString(wcharPointer);
     // try this and watch error output:
     // stdWString += L"Oops";
 
-    EXPECT_STREQ(stdWString, wcharPointer);
-    EXPECT_STREQ(wcharPointer, stdWString);
-    EXPECT_STRNE(stdWString, wcharPointer+1);
-    EXPECT_STRNE(wcharPointer+1, stdWString);
+    EXPECT_EQ(stdWString, wcharPointer);
+    EXPECT_EQ(wcharPointer, stdWString);
+    EXPECT_NE(stdWString, wcharPointer+1);
+    EXPECT_NE(wcharPointer+1, stdWString);
 }
 
 /// \test Compare char* with QString
-TEST(ExpectStreq, canCompareCharPointerWithQString) {
+TEST(ExpectEq, canCompareCharPointerWithQString) {
     const char * charPointer = "Hello String";
     QString qString(charPointer);
     // try this and watch error output:
     // qString += "Oops";
 
-    EXPECT_STREQ(qString, charPointer);
-    EXPECT_STREQ(charPointer, qString);
-    EXPECT_STRNE(qString, charPointer+1);
-    EXPECT_STRNE(charPointer+1, qString);
+    EXPECT_EQ(qString, charPointer);
+    EXPECT_EQ(charPointer, qString);
+    EXPECT_NE(qString, charPointer+1);
+    EXPECT_NE(charPointer+1, qString);
 }
 
-/// \test Compare std::string with Qstring
+/// \test Compare std::string with QString
 TEST(ExpectEq, canCompareStringWithQString) {
     const char * hello = "Hello String";
     std::string stdString(hello);
