@@ -3,7 +3,8 @@
 /build*/
 
 # QtCreator saves user specific project configuration in <projectname>.pro.user
-*.pro.user
+# and adds a kit version number if Qt is upgraded
+*.pro.user*
 
 # QtCreator editor uses extension autosave for intermediate saves
 *.autosave
