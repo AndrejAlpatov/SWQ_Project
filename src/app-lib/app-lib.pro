@@ -8,8 +8,12 @@ TARGET = app-lib
 TEMPLATE = lib
 CONFIG += staticlib
 
-HEADERS += app-lib.h
-SOURCES += app-lib.cpp
+HEADERS += app-lib.h \
+    VersionInfo.h \
+
+SOURCES += \
+    VersionInfo.cpp \
+
 OTHER_FILES += applib.dox
 
 # Currently qmake (version 3.0) does not remove a library

@@ -1,11 +1,11 @@
 //============================================================================
 /// \file
 /// \ingroup    g_applib
-/// \brief      Contains the application library implementation.
+/// \brief      Contains the VersionInfo implementation parts.
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
 
-#include "app-lib.h"
+#include "VersionInfo.h"
 #include "generated-version.h"
 
 const QString VersionInfo::buildTag(BUILDTAG);
