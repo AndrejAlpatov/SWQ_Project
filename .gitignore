@@ -5,6 +5,7 @@
 # QtCreator saves user specific project configuration in <projectname>.pro.user
 # and adds a kit version number if Qt is upgraded
 *.pro.user*
+CMakeLists.txt.user*
 
 # QtCreator editor uses extension autosave for intermediate saves
 *.autosave
