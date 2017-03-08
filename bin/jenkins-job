@@ -53,7 +53,12 @@ echo "$LINE"
 
 set -e			# exit on error
 
-run-build
+run-build "$@"
+# stop here for make target "clean"
+if [[ $# -eq 1 ]] && [[ "$1" = "clean" ]]; then
+    exit 0
+fi
+
 run-test
 
 # stop here for quick tests on jenkins
@@ -70,3 +75,4 @@ if [ -x /usr/bin/doxygen ]; then
 fi
 
 exit $?				# just to get another PS4 output
+
