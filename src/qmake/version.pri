@@ -12,7 +12,7 @@ DEPENDPATH += $$OUT_PWD
 
 # magically create version.h with subversion number
 version.target = $$OUT_PWD/generated-version.h
-version.commands = @bash -c \'mkdir -p \"$$OUT_PWD\"; bash \"$$_PRO_FILE_PWD_/../../bin/create-buildtag.sh\" \"$$version.target\"\'
+version.commands = @bash -c \'mkdir -p \"$$OUT_PWD\"; bash \"$$_PRO_FILE_PWD_/../../bin/create-buildtag\" \"$$version.target\"\'
 version.depends = checkalways	# ensure this is always made
 
 # the target 'always' just prints a build info
@@ -21,7 +21,7 @@ checkalways.commands = @bash -c \'echo -n \"checking version id ... \"\'
 QMAKE_EXTRA_TARGETS += version checkalways
 PRE_TARGETDEPS += $$version.target
 QMAKE_DISTCLEAN += $$version.target
-OTHER_FILES += ../../bin/create-buildtag.sh
+OTHER_FILES += ../../bin/create-buildtag
 
 # qmake sometimes automatically adds (due to include file analysis) a dependency
 # to generated-version.h, but the targets above have the full path included.

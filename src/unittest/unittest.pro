@@ -15,15 +15,14 @@ HEADERS += \
 
 SOURCES += \
     testmain.cpp \
-    testVersionInfo.cpp \
-
+    testVersionInfo.cpp
 
 OTHER_FILES += unittest.dox
 
 include(../qmake/resources.pri)
 
-INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest/googlemock/include \
-    $$_PRO_FILE_PWD_/../googletest/googletest/include \
+# allow to #include <gtest/...> and <gmock/..>
+INCLUDEPATH += $$_PRO_FILE_PWD_/../googletest
 
 DEPENDENCY_LIBRARIES += googletest \    # used in includes.pri
     app-lib
