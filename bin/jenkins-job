@@ -46,7 +46,8 @@ addpath() {
 }
 # Warning: PATH could miss /usr/bin etc. (especially on Windows with Cygwin!)
 addpath /bin /usr/bin /usr/local/bin
-addpath /opt/Qt/*/gcc/bin /opt/Qt/*/gcc_64/bin
+addpath /opt/Qt/*/gcc/bin /opt/Qt/*/gcc_64/bin /usr/local/Qt/*/bin
+addpath $(qmake -query QT_INSTALL_BINS)
 addpath $PWD/bin
 echo "PATH=$PATH"
 echo "$LINE"
