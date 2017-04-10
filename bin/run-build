@@ -7,9 +7,12 @@
 # "run-build clean" to clean the build area).
 #
 ME=${0##*/}
+OSTYPE=$(uname -s | tr [:upper:] [:lower:])
+ARCH=$(uname -m | tr [:upper:] [:lower:])
 LINE="======================================================================"
+
 echo $LINE
-echo "Started $ME on $(hostname) (${OS:-$ARCH})"
+echo "Started $ME on $(hostname) (${OSTYPE}/${ARCH})"
 echo "Called as \"$0 $@\""
 echo $LINE
 PS4='[\D{%F} \t $ME:$LINENO] '
@@ -20,17 +23,9 @@ MAKE=make        # make, will be modified depending on the os
 QMAKE=qmake      # qmake, will be modified depending on the os
 PROJECT=../src/hello-googlemock.pro	# relative to build directory
 
-OSTYPE=$(uname -s | tr [:upper:] [:lower:])
-ARCH=$(uname -m | tr [:upper:] [:lower:])
 
 # adapt build process to different platforms
 case "$OSTYPE" in
-darwin)
-   OSTYPE="macosx"
-   ARCH=x86_64
-   # adding some parameters especially for macosx
-   QMAKE="qmake -spec macx-g++"
-   ;;
 cygwin*)
    ARCH=x86_64
    #windows needs another programm to successfully create the distgene application.
