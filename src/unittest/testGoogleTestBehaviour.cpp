@@ -29,14 +29,14 @@ class GoogleTest : public testing::Test {
 
         // This function is called by the test framework once before all tests (TEST_F).
         // It must be static.
-        static void SetUpTestCase() {
-            cout << "[vvvvvvvvvv] SetUpTestCase() with objectCount=" << objectCount << endl;
+        static void SetUpTestSuite() {
+            cout << "[vvvvvvvvvv] SetUpTestSuite() with objectCount=" << objectCount << endl;
         }
 
         // This function is called by the test framework once after all tests (TEST_F).
         // It must be static.
-        static void TearDownTestCase() {
-            cout << "[^^^^^^^^^^] TearDownTestCase() with objectCount=" << objectCount << endl;
+        static void TearDownTestSuite() {
+            cout << "[^^^^^^^^^^] TearDownTestSuite() with objectCount=" << objectCount << endl;
         }
 
         // This function is called before every test (TEST_F).

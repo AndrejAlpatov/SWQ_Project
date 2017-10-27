@@ -54,8 +54,8 @@ TEST_P(AdderTest, addsAandB) {
 }
 
 
-// Call all TEST_P tests with data using INSTANTIATE_TEST_CASE_P:
-INSTANTIATE_TEST_CASE_P(SingleDigits, AdderTest,
+// Call all TEST_P tests with data using INSTANTIATE_TEST_SUITE_P:
+INSTANTIATE_TEST_SUITE_P(SingleDigits, AdderTest,
                         ::testing::Values(
                             AdderTestData{1, 1, 2},
                             AdderTestData{1, 2, 3}
@@ -64,7 +64,7 @@ INSTANTIATE_TEST_CASE_P(SingleDigits, AdderTest,
 
 // You can instantiate the tests multiple times, but the prefix
 // (here: TeenValues) has to be uniq.
-INSTANTIATE_TEST_CASE_P(TeenValues, AdderTest,
+INSTANTIATE_TEST_SUITE_P(TeenValues, AdderTest,
                         ::testing::Values(
                             AdderTestData{10, 11, 21},
                             AdderTestData{11, 12, 23}
@@ -77,7 +77,7 @@ vector<AdderTestData> dataContainer = {
     { 31, 33, 64 }
 };
 
-INSTANTIATE_TEST_CASE_P(FromVector, AdderTest,
+INSTANTIATE_TEST_SUITE_P(FromVector, AdderTest,
                         ::testing::ValuesIn(dataContainer));
 
 
@@ -99,7 +99,7 @@ TEST_P(AdderTestWithTuple, addsAandB) {
 }
 
 // Or define some ranges
-INSTANTIATE_TEST_CASE_P(WithRange, AdderTestWithTuple,
+INSTANTIATE_TEST_SUITE_P(WithRange, AdderTestWithTuple,
                         ::testing::Combine(
                                 ::testing::Range(10,20,2),
                                 ::testing::Range(30,40,2)
