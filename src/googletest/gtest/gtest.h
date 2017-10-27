@@ -218,12 +218,14 @@
 //   GTEST_OS_AIX      - IBM AIX
 //   GTEST_OS_CYGWIN   - Cygwin
 //   GTEST_OS_FREEBSD  - FreeBSD
+//   GTEST_OS_FUCHSIA  - Fuchsia
 //   GTEST_OS_HPUX     - HP-UX
 //   GTEST_OS_LINUX    - Linux
 //     GTEST_OS_LINUX_ANDROID - Google Android
 //   GTEST_OS_MAC      - Mac OS X
 //     GTEST_OS_IOS    - iOS
 //   GTEST_OS_NACL     - Google Native Client (NaCl)
+//   GTEST_OS_NETBSD   - NetBSD
 //   GTEST_OS_OPENBSD  - OpenBSD
 //   GTEST_OS_QNX      - QNX
 //   GTEST_OS_SOLARIS  - Sun Solaris
@@ -266,6 +268,8 @@
 //                            tests)
 //   GTEST_HAS_DEATH_TEST   - death tests
 //   GTEST_HAS_PARAM_TEST   - value-parameterized tests
+//   GTEST_HAS_TESTCASE     - the former TestCase API is provided in parallel
+//                            to the new TestSuite API
 //   GTEST_HAS_TYPED_TEST   - typed tests
 //   GTEST_HAS_TYPED_TEST_P - type-parameterized tests
 //   GTEST_IS_THREADSAFE    - Google Test is thread-safe.
@@ -445,6 +449,8 @@
 # endif
 #elif defined __FreeBSD__
 # define GTEST_OS_FREEBSD 1
+#elif defined __Fuchsia__
+# define GTEST_OS_FUCHSIA 1
 #elif defined __linux__
 # define GTEST_OS_LINUX 1
 # if defined __ANDROID__
@@ -460,6 +466,8 @@
 # define GTEST_OS_HPUX 1
 #elif defined __native_client__
 # define GTEST_OS_NACL 1
+#elif defined __NetBSD__
+# define GTEST_OS_NETBSD 1
 #elif defined __OpenBSD__
 # define GTEST_OS_OPENBSD 1
 #elif defined __QNX__
@@ -530,6 +538,9 @@
 //     GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)
 //     GTEST_LOCK_EXCLUDED_(locks)
 //
+//   Exporting API symbols:
+//     GTEST_API_ - Specifier for exported symbols.
+//
 // ** Custom implementation starts here **
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_PORT_H_
@@ -579,7 +590,7 @@
 // -std={c,gnu}++{0x,11} is passed.  The C++11 standard specifies a
 // value for __cplusplus, and recent versions of clang, gcc, and
 // probably other compilers set that too in C++11 mode.
-# if __GXX_EXPERIMENTAL_CXX0X__ || __cplusplus >= 201103L
+# if __GXX_EXPERIMENTAL_CXX0X__ || __cplusplus >= 201103L || _MSC_VER >= 1900
 // Compiling in at least C++11 mode.
 #  define GTEST_LANG_CXX11 1
 # else
@@ -611,12 +622,16 @@
 #if GTEST_STDLIB_CXX11
 # define GTEST_HAS_STD_BEGIN_AND_END_ 1
 # define GTEST_HAS_STD_FORWARD_LIST_ 1
-# define GTEST_HAS_STD_FUNCTION_ 1
+# if !defined(_MSC_VER) || (_MSC_FULL_VER >= 190023824) // works only with VS2015U2 and better
+#   define GTEST_HAS_STD_FUNCTION_ 1
+# endif
 # define GTEST_HAS_STD_INITIALIZER_LIST_ 1
 # define GTEST_HAS_STD_MOVE_ 1
 # define GTEST_HAS_STD_SHARED_PTR_ 1
 # define GTEST_HAS_STD_TYPE_TRAITS_ 1
 # define GTEST_HAS_STD_UNIQUE_PTR_ 1
+# define GTEST_HAS_UNORDERED_MAP_ 1
+# define GTEST_HAS_UNORDERED_SET_ 1
 #endif
 
 // C++11 specifies that <tuple> provides std::tuple.
@@ -652,10 +667,16 @@
 #  include <io.h>
 # endif
 // In order to avoid having to include <windows.h>, use forward declaration
-// assuming CRITICAL_SECTION is a typedef of _RTL_CRITICAL_SECTION.
+#if GTEST_OS_WINDOWS_MINGW && !defined(__MINGW64_VERSION_MAJOR)
+// MinGW defined _CRITICAL_SECTION and _RTL_CRITICAL_SECTION as two
+// separate (equivalent) structs, instead of using typedef
+typedef struct _CRITICAL_SECTION GTEST_CRITICAL_SECTION;
+#else
+// Assume CRITICAL_SECTION is a typedef of _RTL_CRITICAL_SECTION.
 // This assumption is verified by
 // WindowsTypesTest.CRITICAL_SECTIONIs_RTL_CRITICAL_SECTION.
-struct _RTL_CRITICAL_SECTION;
+typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
+#endif
 #else
 // This assumes that non-Windows OSes provide unistd.h. For OSes where this
 // is not the case, we need to include headers that provide the functions
@@ -856,8 +877,9 @@ struct _RTL_CRITICAL_SECTION;
 //
 // To disable threading support in Google Test, add -DGTEST_HAS_PTHREAD=0
 // to your compiler flags.
-# define GTEST_HAS_PTHREAD (GTEST_OS_LINUX || GTEST_OS_MAC || GTEST_OS_HPUX \
-    || GTEST_OS_QNX || GTEST_OS_FREEBSD || GTEST_OS_NACL)
+#define GTEST_HAS_PTHREAD                                                      \
+  (GTEST_OS_LINUX || GTEST_OS_MAC || GTEST_OS_HPUX || GTEST_OS_QNX ||          \
+   GTEST_OS_FREEBSD || GTEST_OS_NACL || GTEST_OS_NETBSD || GTEST_OS_FUCHSIA)
 #endif  // GTEST_HAS_PTHREAD
 
 #if GTEST_HAS_PTHREAD
@@ -872,7 +894,7 @@ struct _RTL_CRITICAL_SECTION;
 // Determines if hash_map/hash_set are available.
 // Only used for testing against those containers.
 #if !defined(GTEST_HAS_HASH_MAP_)
-# if _MSC_VER
+# if defined(_MSC_VER) && (_MSC_VER < 1900)
 #  define GTEST_HAS_HASH_MAP_ 1  // Indicates that hash_map is available.
 #  define GTEST_HAS_HASH_SET_ 1  // Indicates that hash_set is available.
 # endif  // _MSC_VER
@@ -907,7 +929,8 @@ struct _RTL_CRITICAL_SECTION;
 // support TR1 tuple.  libc++ only provides std::tuple, in C++11 mode,
 // and it can be used with some compilers that define __GNUC__.
 # if (defined(__GNUC__) && !defined(__CUDACC__) && (GTEST_GCC_VER_ >= 40000) \
-      && !GTEST_OS_QNX && !defined(_LIBCPP_VERSION)) || _MSC_VER >= 1600
+      && !GTEST_OS_QNX && !defined(_LIBCPP_VERSION)) \
+      || (_MSC_VER >= 1600 && _MSC_VER < 1900)
 #  define GTEST_ENV_HAS_TR1_TUPLE_ 1
 # endif
 
@@ -2007,7 +2030,7 @@ using ::std::tuple_size;
 #   define _TR1_FUNCTIONAL 1
 #   include <tr1/tuple>
 #   undef _TR1_FUNCTIONAL  // Allows the user to #include
-                        // <tr1/functional> if he chooses to.
+                        // <tr1/functional> if they choose to.
 #  else
 #   include <tr1/tuple>  // NOLINT
 #  endif  // !GTEST_HAS_RTTI && GTEST_GCC_VER_ < 40302
@@ -2029,8 +2052,12 @@ using ::std::tuple_size;
 
 # if GTEST_OS_LINUX && !defined(__ia64__)
 #  if GTEST_OS_LINUX_ANDROID
-// On Android, clone() is only available on ARM starting with Gingerbread.
-#    if defined(__arm__) && __ANDROID_API__ >= 9
+// On Android, clone() became available at different API levels for each 32-bit
+// architecture.
+#    if defined(__LP64__) || \
+        (defined(__arm__) && __ANDROID_API__ >= 9) || \
+        (defined(__mips__) && __ANDROID_API__ >= 12) || \
+        (defined(__i386__) && __ANDROID_API__ >= 17)
 #     define GTEST_HAS_CLONE 1
 #    else
 #     define GTEST_HAS_CLONE 0
@@ -2065,7 +2092,7 @@ using ::std::tuple_size;
      (GTEST_OS_MAC && !GTEST_OS_IOS) || \
      (GTEST_OS_WINDOWS_DESKTOP && _MSC_VER >= 1400) || \
      GTEST_OS_WINDOWS_MINGW || GTEST_OS_AIX || GTEST_OS_HPUX || \
-     GTEST_OS_OPENBSD || GTEST_OS_QNX || GTEST_OS_FREEBSD)
+     GTEST_OS_OPENBSD || GTEST_OS_QNX || GTEST_OS_FREEBSD || GTEST_OS_NETBSD)
 # define GTEST_HAS_DEATH_TEST 1
 #endif
 
@@ -2139,6 +2166,23 @@ using ::std::tuple_size;
 # define GTEST_ATTRIBUTE_UNUSED_
 #endif
 
+// Use this annotation before a function that takes a printf format string.
+#if defined(__GNUC__) && !defined(COMPILER_ICC)
+# if defined(__MINGW_PRINTF_FORMAT)
+// MinGW has two different printf implementations. Ensure the format macro
+// matches the selected implementation. See
+// https://sourceforge.net/p/mingw-w64/wiki2/gnu%20printf/.
+#  define GTEST_ATTRIBUTE_PRINTF_(string_index, first_to_check) \
+       __attribute__((__format__(__MINGW_PRINTF_FORMAT, string_index, \
+                                 first_to_check)))
+# else
+#  define GTEST_ATTRIBUTE_PRINTF_(string_index, first_to_check) \
+       __attribute__((__format__(__printf__, string_index, first_to_check)))
+# endif
+#else
+# define GTEST_ATTRIBUTE_PRINTF_(string_index, first_to_check)
+#endif
+
 // A macro to disallow operator=
 // This should be used in the private: declarations for a class.
 #define GTEST_DISALLOW_ASSIGN_(type)\
@@ -2195,6 +2239,11 @@ using ::std::tuple_size;
 
 #endif  // GTEST_HAS_SEH
 
+// GTEST_API_ qualifies all symbols that must be exported. The definitions below
+// are guarded by #ifndef to give embedders a chance to define GTEST_API_ in
+// gtest/internal/custom/gtest-port.h
+#ifndef GTEST_API_
+
 #ifdef _MSC_VER
 # if GTEST_LINKED_AS_SHARED_LIBRARY
 #  define GTEST_API_ __declspec(dllimport)
@@ -2205,9 +2254,11 @@ using ::std::tuple_size;
 # define GTEST_API_ __attribute__((visibility ("default")))
 #endif // _MSC_VER
 
+#endif // GTEST_API_
+
 #ifndef GTEST_API_
 # define GTEST_API_
-#endif
+#endif // GTEST_API_
 
 #ifdef __GNUC__
 // Ask the compiler to never inline a given function.
@@ -2693,9 +2744,6 @@ GTEST_API_ std::string GetCapturedStderr();
 
 #endif  // GTEST_HAS_STREAM_REDIRECTION
 
-// Returns a path to temporary directory.
-GTEST_API_ std::string TempDir();
-
 // Returns the size (in bytes) of a file.
 GTEST_API_ size_t GetFileSize(FILE* file);
 
@@ -2968,7 +3016,7 @@ class GTEST_API_ Mutex {
   // by the linker.
   MutexType type_;
   long critical_section_init_phase_;  // NOLINT
-  _RTL_CRITICAL_SECTION* critical_section_;
+  GTEST_CRITICAL_SECTION* critical_section_;
 
   GTEST_DISALLOW_COPY_AND_ASSIGN_(Mutex);
 };
@@ -3302,7 +3350,7 @@ extern "C" inline void DeleteThreadLocalValue(void* value_holder) {
 
 // Implements thread-local storage on pthreads-based systems.
 template <typename T>
-class ThreadLocal {
+class GTEST_API_ ThreadLocal {
  public:
   ThreadLocal()
       : key_(CreateKey()), default_factory_(new DefaultValueHolderFactory()) {}
@@ -3434,7 +3482,7 @@ class GTestMutexLock {
 typedef GTestMutexLock MutexLock;
 
 template <typename T>
-class ThreadLocal {
+class GTEST_API_ ThreadLocal {
  public:
   ThreadLocal() : value_() {}
   explicit ThreadLocal(const T& value) : value_(value) {}
@@ -3453,12 +3501,13 @@ class ThreadLocal {
 GTEST_API_ size_t GetThreadCount();
 
 // Passing non-POD classes through ellipsis (...) crashes the ARM
-// compiler and generates a warning in Sun Studio.  The Nokia Symbian
+// compiler and generates a warning in Sun Studio before 12u4. The Nokia Symbian
 // and the IBM XL C/C++ compiler try to instantiate a copy constructor
 // for objects passed through ellipsis (...), failing for uncopyable
 // objects.  We define this to ensure that only POD is passed through
 // ellipsis on these systems.
-#if defined(__SYMBIAN32__) || defined(__IBMCPP__) || defined(__SUNPRO_CC)
+#if defined(__SYMBIAN32__) || defined(__IBMCPP__) || \
+     (defined(__SUNPRO_CC) && __SUNPRO_CC < 0x5130)
 // We lose support for NULL detection where the compiler doesn't like
 // passing non-POD classes through ellipsis (...).
 # define GTEST_ELLIPSIS_NEEDS_POD_ 1
@@ -3483,6 +3532,12 @@ template <bool bool_value> const bool bool_constant<bool_value>::value;
 
 typedef bool_constant<false> false_type;
 typedef bool_constant<true> true_type;
+
+template <typename T, typename U>
+struct is_same : public false_type {};
+
+template <typename T>
+struct is_same<T, T> : public true_type {};
 
 template <typename T>
 struct is_pointer : public false_type {};
@@ -3660,7 +3715,7 @@ inline int Close(int fd) { return close(fd); }
 inline const char* StrError(int errnum) { return strerror(errnum); }
 #endif
 inline const char* GetEnv(const char* name) {
-#if GTEST_OS_WINDOWS_MOBILE || GTEST_OS_WINDOWS_PHONE | GTEST_OS_WINDOWS_RT
+#if GTEST_OS_WINDOWS_MOBILE || GTEST_OS_WINDOWS_PHONE || GTEST_OS_WINDOWS_RT
   // We are on Windows CE, which has no environment variables.
   static_cast<void>(name);  // To prevent 'unused argument' warning.
   return NULL;
@@ -3824,6 +3879,7 @@ GTEST_API_ Int32 Int32FromGTestEnv(const char* flag, Int32 default_val);
 std::string StringFromGTestEnv(const char* flag, const char* default_val);
 
 }  // namespace internal
+
 }  // namespace testing
 
 #endif  // GTEST_INCLUDE_GTEST_INTERNAL_GTEST_PORT_H_
@@ -7910,7 +7966,7 @@ namespace edit_distance {
 // Returns the optimal edits to go from 'left' to 'right'.
 // All edits cost the same, with replace having lower priority than
 // add/remove.
-// Simple implementation of the Wagner–Fischer algorithm.
+// Simple implementation of the Wagner-Fischer algorithm.
 // See http://en.wikipedia.org/wiki/Wagner-Fischer_algorithm
 enum EditType { kMatch, kAdd, kRemove, kReplace };
 GTEST_API_ std::vector<EditType> CalculateOptimalEdits(
@@ -8232,14 +8288,21 @@ GTEST_API_ AssertionResult IsHRESULTFailure(const char* expr,
 
 #endif  // GTEST_OS_WINDOWS
 
+// Types of SetUpTestSuite() and TearDownTestSuite() functions.
+typedef void (*SetUpTestSuiteFunc)();
+typedef void (*TearDownTestSuiteFunc)();
+#if GTEST_HAS_TESTCASE
+// Backward compatibility:
 // Types of SetUpTestCase() and TearDownTestCase() functions.
-typedef void (*SetUpTestCaseFunc)();
-typedef void (*TearDownTestCaseFunc)();
+typedef SetUpTestSuiteFunc SetUpTestCaseFunc;
+typedef TearDownTestSuiteFunc TearDownTestCaseFunc;
+#endif
 
 struct CodeLocation {
-  CodeLocation(const string& a_file, int a_line) : file(a_file), line(a_line) {}
+  CodeLocation(const std::string& a_file, int a_line)
+      : file(a_file), line(a_line) {}
 
-  string file;
+  std::string file;
   int line;
 };
 
@@ -8248,7 +8311,7 @@ struct CodeLocation {
 //
 // Arguments:
 //
-//   test_case_name:   name of the test case
+//   test_suite_name:  name of the test suite
 //   name:             name of the test
 //   type_param        the name of the test's type parameter, or NULL if
 //                     this is not a typed or a type-parameterized test.
@@ -8256,21 +8319,31 @@ struct CodeLocation {
 //                     or NULL if this is not a type-parameterized test.
 //   code_location:    code location where the test is defined
 //   fixture_class_id: ID of the test fixture class
-//   set_up_tc:        pointer to the function that sets up the test case
-//   tear_down_tc:     pointer to the function that tears down the test case
+//   set_up_ts:        pointer to the function that sets up the test suite
+//   tear_down_ts:     pointer to the function that tears down the test suite
 //   factory:          pointer to the factory that creates a test object.
 //                     The newly created TestInfo instance will assume
 //                     ownership of the factory object.
+//   set_up_tc:        pointer to the function that sets up the test case
+//                     (for backward compatibility)
+//   tear_down_tc:     pointer to the function that tears down the test case
+//                     (for backward compatibility)
 GTEST_API_ TestInfo* MakeAndRegisterTestInfo(
-    const char* test_case_name,
+    const char* test_suite_name,
     const char* name,
     const char* type_param,
     const char* value_param,
     CodeLocation code_location,
     TypeId fixture_class_id,
-    SetUpTestCaseFunc set_up_tc,
-    TearDownTestCaseFunc tear_down_tc,
-    TestFactoryBase* factory);
+    SetUpTestSuiteFunc set_up_ts,
+    TearDownTestSuiteFunc tear_down_ts,
+    TestFactoryBase* factory
+#if GTEST_HAS_TESTCASE
+    // backward compatibility
+    , SetUpTestCaseFunc set_up_tc = NULL,
+    TearDownTestCaseFunc tear_down_tc = NULL
+#endif
+    );
 
 // If *pstr starts with the given prefix, modifies *pstr to be right
 // past the prefix and returns true; otherwise leaves *pstr unchanged
@@ -8358,7 +8431,7 @@ template <GTEST_TEMPLATE_ Fixture, class TestSel, typename Types>
 class TypeParameterizedTest {
  public:
   // 'index' is the index of the test in the type list 'Types'
-  // specified in INSTANTIATE_TYPED_TEST_CASE_P(Prefix, TestCase,
+  // specified in INSTANTIATE_TYPED_TEST_CASE_P(Prefix, TestSuite,
   // Types).  Valid values for 'index' are [0, N - 1] where N is the
   // length of Types.
   static bool Register(const char* prefix,
@@ -8379,9 +8452,14 @@ class TypeParameterizedTest {
         NULL,  // No value parameter.
         code_location,
         GetTypeId<FixtureClass>(),
-        TestClass::SetUpTestCase,
-        TestClass::TearDownTestCase,
-        new TestFactoryImpl<TestClass>);
+        TestClass::SetUpTestSuite,
+        TestClass::TearDownTestSuite,
+        new TestFactoryImpl<TestClass>
+#if GTEST_HAS_TESTCASE
+        , TestClass::SetUpTestCase,
+        TestClass::TearDownTestCase
+#endif
+    );
 
     // Next, recurses (at compile time) with the tail of the type list.
     return TypeParameterizedTest<Fixture, TestSel, typename Types::Tail>
@@ -8674,6 +8752,31 @@ typedef char IsNotContainer;
 template <class C>
 IsNotContainer IsContainerTest(long /* dummy */) { return '\0'; }
 
+template <typename C, bool = 
+  sizeof(IsContainerTest<C>(0)) == sizeof(IsContainer)
+>
+struct IsRecursiveContainerImpl;
+
+template <typename C>
+struct IsRecursiveContainerImpl<C, false> : public false_type {};
+
+template <typename C>
+struct IsRecursiveContainerImpl<C, true> {
+  typedef
+    typename IteratorTraits<typename C::iterator>::value_type
+  value_type;
+  typedef is_same<value_type, C> type;
+};
+
+// IsRecursiveContainer<Type> is a unary compile-time predicate that
+// evaluates whether C is a recursive container type. A recursive container 
+// type is a container type whose value_type is equal to the container type
+// itself. An example for a recursive container type is 
+// boost::filesystem::path, whose iterator has a value_type that is equal to 
+// boost::filesystem::path.
+template<typename C>
+struct IsRecursiveContainer : public IsRecursiveContainerImpl<C>::type {};
+
 // EnableIf<condition>::type is void when 'Cond' is true, and
 // undefined when 'Cond' is false.  To use SFINAE to make a function
 // overload only apply when a particular expression is true, add
@@ -8946,28 +9049,59 @@ class NativeArray {
   test_case_name##_##test_name##_Test
 
 // Helper macro for defining tests.
-#define GTEST_TEST_(test_case_name, test_name, parent_class, parent_id)\
-class GTEST_TEST_CLASS_NAME_(test_case_name, test_name) : public parent_class {\
+#if GTEST_HAS_TESTCASE
+
+#define GTEST_TEST_(test_suite_name, test_name, parent_class, parent_id)\
+class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name) : public parent_class {\
  public:\
-  GTEST_TEST_CLASS_NAME_(test_case_name, test_name)() {}\
+  GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}\
  private:\
   virtual void TestBody();\
   static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;\
   GTEST_DISALLOW_COPY_AND_ASSIGN_(\
-      GTEST_TEST_CLASS_NAME_(test_case_name, test_name));\
+      GTEST_TEST_CLASS_NAME_(test_suite_name, test_name));\
 };\
 \
-::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_case_name, test_name)\
+::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)\
   ::test_info_ =\
     ::testing::internal::MakeAndRegisterTestInfo(\
-        #test_case_name, #test_name, NULL, NULL, \
+        #test_suite_name, #test_name, NULL, NULL, \
         ::testing::internal::CodeLocation(__FILE__, __LINE__), \
         (parent_id), \
-        parent_class::SetUpTestCase, \
-        parent_class::TearDownTestCase, \
+        parent_class::SetUpTestSuite, \
+        parent_class::TearDownTestSuite, \
         new ::testing::internal::TestFactoryImpl<\
-            GTEST_TEST_CLASS_NAME_(test_case_name, test_name)>);\
-void GTEST_TEST_CLASS_NAME_(test_case_name, test_name)::TestBody()
+            GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)>, \
+        parent_class::SetUpTestCase, \
+        parent_class::TearDownTestCase);\
+void GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::TestBody()
+
+#else
+
+#define GTEST_TEST_(test_suite_name, test_name, parent_class, parent_id)\
+class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name) : public parent_class {\
+ public:\
+  GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}\
+ private:\
+  virtual void TestBody();\
+  static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;\
+  GTEST_DISALLOW_COPY_AND_ASSIGN_(\
+      GTEST_TEST_CLASS_NAME_(test_suite_name, test_name));\
+};\
+\
+::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)\
+  ::test_info_ =\
+    ::testing::internal::MakeAndRegisterTestInfo(\
+        #test_suite_name, #test_name, NULL, NULL, \
+        ::testing::internal::CodeLocation(__FILE__, __LINE__), \
+        (parent_id), \
+        parent_class::SetUpTestSuite, \
+        parent_class::TearDownTestSuite, \
+        new ::testing::internal::TestFactoryImpl<\
+            GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)>);\
+void GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::TestBody()
+
+#endif
 
 #endif  // GTEST_INCLUDE_GTEST_INTERNAL_GTEST_INTERNAL_H_
 
@@ -10196,7 +10330,8 @@ class TypeWithoutFormatter {
  public:
   // This default version is called when kTypeKind is kOtherType.
   static void PrintValue(const T& value, ::std::ostream* os) {
-    PrintBytesInObjectTo(reinterpret_cast<const unsigned char*>(&value),
+    PrintBytesInObjectTo(static_cast<const unsigned char*>(
+                             reinterpret_cast<const void *>(&value)),
                          sizeof(value), os);
   }
 };
@@ -10210,10 +10345,10 @@ template <typename T>
 class TypeWithoutFormatter<T, kProtobuf> {
  public:
   static void PrintValue(const T& value, ::std::ostream* os) {
-    const ::testing::internal::string short_str = value.ShortDebugString();
-    const ::testing::internal::string pretty_str =
-        short_str.length() <= kProtobufOneLinerMaxLength ?
-        short_str : ("\n" + value.DebugString());
+    std::string pretty_str = value.ShortDebugString();
+    if (pretty_str.length() > kProtobufOneLinerMaxLength) {
+      pretty_str = "\n" + value.DebugString();
+    }
     *os << ("<" + pretty_str + ">");
   }
 };
@@ -10423,11 +10558,18 @@ class UniversalPrinter;
 template <typename T>
 void UniversalPrint(const T& value, ::std::ostream* os);
 
+enum DefaultPrinterType {
+  kPrintContainer,
+  kPrintPointer,
+  kPrintFunctionPointer,
+  kPrintOther,
+};
+template <DefaultPrinterType type> struct WrapPrinterType {};
+
 // Used to print an STL-style container when the user doesn't define
 // a PrintTo() for it.
 template <typename C>
-void DefaultPrintTo(IsContainer /* dummy */,
-                    false_type /* is not a pointer */,
+void DefaultPrintTo(WrapPrinterType<kPrintContainer> /* dummy */,
                     const C& container, ::std::ostream* os) {
   const size_t kMaxCount = 32;  // The maximum number of elements to print.
   *os << '{';
@@ -10460,40 +10602,38 @@ void DefaultPrintTo(IsContainer /* dummy */,
 // implementation-defined.  Therefore they will be printed as raw
 // bytes.)
 template <typename T>
-void DefaultPrintTo(IsNotContainer /* dummy */,
-                    true_type /* is a pointer */,
+void DefaultPrintTo(WrapPrinterType<kPrintPointer> /* dummy */,
                     T* p, ::std::ostream* os) {
   if (p == NULL) {
     *os << "NULL";
   } else {
-    // C++ doesn't allow casting from a function pointer to any object
-    // pointer.
-    //
-    // IsTrue() silences warnings: "Condition is always true",
-    // "unreachable code".
-    if (IsTrue(ImplicitlyConvertible<T*, const void*>::value)) {
-      // T is not a function type.  We just call << to print p,
-      // relying on ADL to pick up user-defined << for their pointer
-      // types, if any.
-      *os << p;
-    } else {
-      // T is a function type, so '*os << p' doesn't do what we want
-      // (it just prints p as bool).  We want to print p as a const
-      // void*.  However, we cannot cast it to const void* directly,
-      // even using reinterpret_cast, as earlier versions of gcc
-      // (e.g. 3.4.5) cannot compile the cast when p is a function
-      // pointer.  Casting to UInt64 first solves the problem.
-      *os << reinterpret_cast<const void*>(
-          reinterpret_cast<internal::UInt64>(p));
-    }
+    // T is not a function type.  We just call << to print p,
+    // relying on ADL to pick up user-defined << for their pointer
+    // types, if any.
+    *os << p;
+  }
+}
+template <typename T>
+void DefaultPrintTo(WrapPrinterType<kPrintFunctionPointer> /* dummy */,
+                    T* p, ::std::ostream* os) {
+  if (p == NULL) {
+    *os << "NULL";
+  } else {
+    // T is a function type, so '*os << p' doesn't do what we want
+    // (it just prints p as bool).  We want to print p as a const
+    // void*.  However, we cannot cast it to const void* directly,
+    // even using reinterpret_cast, as earlier versions of gcc
+    // (e.g. 3.4.5) cannot compile the cast when p is a function
+    // pointer.  Casting to UInt64 first solves the problem.
+    *os << reinterpret_cast<const void*>(
+        reinterpret_cast<internal::UInt64>(p));
   }
 }
 
 // Used to print a non-container, non-pointer value when the user
 // doesn't define PrintTo() for it.
 template <typename T>
-void DefaultPrintTo(IsNotContainer /* dummy */,
-                    false_type /* is not a pointer */,
+void DefaultPrintTo(WrapPrinterType<kPrintOther> /* dummy */,
                     const T& value, ::std::ostream* os) {
   ::testing_internal::DefaultPrintNonContainerTo(value, os);
 }
@@ -10511,29 +10651,40 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
 // wants).
 template <typename T>
 void PrintTo(const T& value, ::std::ostream* os) {
-  // DefaultPrintTo() is overloaded.  The type of its first two
-  // arguments determine which version will be picked.  If T is an
-  // STL-style container, the version for container will be called; if
-  // T is a pointer, the pointer version will be called; otherwise the
-  // generic version will be called.
+  // DefaultPrintTo() is overloaded.  The type of its first argument
+  // determines which version will be picked.
   //
-  // Note that we check for container types here, prior to we check
-  // for protocol message types in our operator<<.  The rationale is:
+  // Note that we check for recursive and other container types here, prior 
+  // to we check for protocol message types in our operator<<.  The rationale is:
   //
   // For protocol messages, we want to give people a chance to
   // override Google Mock's format by defining a PrintTo() or
   // operator<<.  For STL containers, other formats can be
   // incompatible with Google Mock's format for the container
   // elements; therefore we check for container types here to ensure
-  // that our format is used.
+  // that our format is used. To prevent an infinite runtime recursion
+  // during the output of recursive container types, we check first for
+  // those.
   //
-  // The second argument of DefaultPrintTo() is needed to bypass a bug
-  // in Symbian's C++ compiler that prevents it from picking the right
-  // overload between:
-  //
-  //   PrintTo(const T& x, ...);
-  //   PrintTo(T* x, ...);
-  DefaultPrintTo(IsContainerTest<T>(0), is_pointer<T>(), value, os);
+  // Note that MSVC and clang-cl do allow an implicit conversion from
+  // pointer-to-function to pointer-to-object, but clang-cl warns on it.
+  // So don't use ImplicitlyConvertible if it can be helped since it will
+  // cause this warning, and use a separate overload of DefaultPrintTo for
+  // function pointers so that the `*os << p` in the object pointer overload
+  // doesn't cause that warning either.
+  DefaultPrintTo(
+      WrapPrinterType<
+          (sizeof(IsContainerTest<T>(0)) == sizeof(IsContainer)) && !IsRecursiveContainer<T>::value
+            ? kPrintContainer : !is_pointer<T>::value
+              ? kPrintOther
+#if GTEST_LANG_CXX11
+                : std::is_function<typename std::remove_pointer<T>::type>::value
+#else
+                : !internal::ImplicitlyConvertible<T, const void*>::value
+#endif
+                    ? kPrintFunctionPointer
+                    : kPrintPointer>(),
+      value, os);
 }
 
 // The following list of PrintTo() overloads tells
@@ -10864,7 +11015,7 @@ class UniversalTersePrinter<const char*> {
     if (str == NULL) {
       *os << "NULL";
     } else {
-      UniversalPrint(string(str), os);
+      UniversalPrint(std::string(str), os);
     }
   }
 };
@@ -11426,7 +11577,7 @@ std::string DefaultParamName(const TestParamInfo<ParamType>& info) {
 // INTERNAL IMPLEMENTATION - DO NOT USE IN USER CODE.
 //
 // Parameterized test name overload helpers, which help the
-// INSTANTIATE_TEST_CASE_P macro choose between the default parameterized
+// INSTANTIATE_TEST_SUITE_P macro choose between the default parameterized
 // test name generator and user param name generator.
 template <class ParamType, class ParamNameGenFunctor>
 ParamNameGenFunctor GetParamNameGen(ParamNameGenFunctor func) {
@@ -11505,7 +11656,7 @@ class TestMetaFactory
 // ParameterizedTestCaseInfoBase is a generic interface
 // to ParameterizedTestCaseInfo classes. ParameterizedTestCaseInfoBase
 // accumulates test information provided by TEST_P macro invocations
-// and generators provided by INSTANTIATE_TEST_CASE_P macro invocations
+// and generators provided by INSTANTIATE_TEST_SUITE_P macro invocations
 // and uses that information to register all resulting test instances
 // in RegisterTests method. The ParameterizeTestCaseRegistry class holds
 // a collection of pointers to the ParameterizedTestCaseInfo objects
@@ -11515,7 +11666,7 @@ class ParameterizedTestCaseInfoBase {
   virtual ~ParameterizedTestCaseInfoBase() {}
 
   // Base part of test case name for display purposes.
-  virtual const string& GetTestCaseName() const = 0;
+  virtual const std::string& GetTestCaseName() const = 0;
   // Test case id to verify identity.
   virtual TypeId GetTestCaseTypeId() const = 0;
   // UnitTest class invokes this method to register tests in this
@@ -11535,7 +11686,7 @@ class ParameterizedTestCaseInfoBase {
 //
 // ParameterizedTestCaseInfo accumulates tests obtained from TEST_P
 // macro invocations for a particular test case and generators
-// obtained from INSTANTIATE_TEST_CASE_P macro invocations for that
+// obtained from INSTANTIATE_TEST_SUITE_P macro invocations for that
 // test case. It registers tests with all values generated by all
 // generators when asked.
 template <class TestCase>
@@ -11554,7 +11705,7 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
       : test_case_name_(name), code_location_(code_location) {}
 
   // Test case base name for display purposes.
-  virtual const string& GetTestCaseName() const { return test_case_name_; }
+  virtual const std::string& GetTestCaseName() const { return test_case_name_; }
   // Test case id to verify identity.
   virtual TypeId GetTestCaseTypeId() const { return GetTypeId<TestCase>(); }
   // TEST_P macro uses AddTestPattern() to record information
@@ -11570,13 +11721,12 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
                                                        test_base_name,
                                                        meta_factory)));
   }
-  // INSTANTIATE_TEST_CASE_P macro uses AddGenerator() to record information
+  // INSTANTIATE_TEST_SUITE_P macro uses AddGenerator() to record information
   // about a generator.
-  int AddTestCaseInstantiation(const string& instantiation_name,
+  int AddTestCaseInstantiation(const std::string& instantiation_name,
                                GeneratorCreationFunc* func,
                                ParamNameGeneratorFunc* name_func,
-                               const char* file,
-                               int line) {
+                               const char* file, int line) {
     instantiations_.push_back(
         InstantiationInfo(instantiation_name, func, name_func, file, line));
     return 0;  // Return value used only to run this method in namespace scope.
@@ -11593,13 +11743,13 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
       for (typename InstantiationContainer::iterator gen_it =
                instantiations_.begin(); gen_it != instantiations_.end();
                ++gen_it) {
-        const string& instantiation_name = gen_it->name;
+        const std::string& instantiation_name = gen_it->name;
         ParamGenerator<ParamType> generator((*gen_it->generator)());
         ParamNameGeneratorFunc* name_func = gen_it->name_func;
         const char* file = gen_it->file;
         int line = gen_it->line;
 
-        string test_case_name;
+        std::string test_case_name;
         if ( !instantiation_name.empty() )
           test_case_name = instantiation_name + "/";
         test_case_name += test_info->test_case_base_name;
@@ -11633,9 +11783,14 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
               PrintToString(*param_it).c_str(),
               code_location_,
               GetTestCaseTypeId(),
-              TestCase::SetUpTestCase,
-              TestCase::TearDownTestCase,
-              test_info->test_meta_factory->CreateTestFactory(*param_it));
+              TestCase::SetUpTestSuite,
+              TestCase::TearDownTestSuite,
+              test_info->test_meta_factory->CreateTestFactory(*param_it)
+#if GTEST_HAS_TESTCASE
+              , TestCase::SetUpTestCase,
+              TestCase::TearDownTestCase
+#endif
+              );
         }  // for param_it
       }  // for gen_it
     }  // for test_it
@@ -11652,12 +11807,12 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
         test_base_name(a_test_base_name),
         test_meta_factory(a_test_meta_factory) {}
 
-    const string test_case_base_name;
-    const string test_base_name;
+    const std::string test_case_base_name;
+    const std::string test_base_name;
     const scoped_ptr<TestMetaFactoryBase<ParamType> > test_meta_factory;
   };
   typedef ::std::vector<linked_ptr<TestInfo> > TestInfoContainer;
-  // Records data received from INSTANTIATE_TEST_CASE_P macros:
+  // Records data received from INSTANTIATE_TEST_SUITE_P macros:
   //  <Instantiation name, Sequence generator creation function,
   //     Name generator function, Source file, Source line>
   struct InstantiationInfo {
@@ -11694,7 +11849,7 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
     return true;
   }
 
-  const string test_case_name_;
+  const std::string test_case_name_;
   CodeLocation code_location_;
   TestInfoContainer tests_;
   InstantiationContainer instantiations_;
@@ -11705,7 +11860,7 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
 // INTERNAL IMPLEMENTATION - DO NOT USE IN USER CODE.
 //
 // ParameterizedTestCaseRegistry contains a map of ParameterizedTestCaseInfoBase
-// classes accessed by test case names. TEST_P and INSTANTIATE_TEST_CASE_P
+// classes accessed by test case names. TEST_P and INSTANTIATE_TEST_SUITE_P
 // macros use it to locate their corresponding ParameterizedTestCaseInfo
 // descriptors.
 class ParameterizedTestCaseRegistry {
@@ -18143,23 +18298,28 @@ internal::CartesianProductHolder10<Generator1, Generator2, Generator3,
 // Note: test names must be non-empty, unique, and may only contain ASCII
 // alphanumeric characters or underscore.
 
-# define INSTANTIATE_TEST_CASE_P(prefix, test_case_name, generator, ...) \
-  ::testing::internal::ParamGenerator<test_case_name::ParamType> \
-      gtest_##prefix##test_case_name##_EvalGenerator_() { return generator; } \
-  ::std::string gtest_##prefix##test_case_name##_EvalGenerateName_( \
-      const ::testing::TestParamInfo<test_case_name::ParamType>& info) { \
-    return ::testing::internal::GetParamNameGen<test_case_name::ParamType> \
+#if GTEST_HAS_TESTCASE
+# define INSTANTIATE_TEST_CASE_P(prefix, test_suite_name, generator, ...) \
+  INSTANTIATE_TEST_SUITE_P(prefix, test_suite_name, generator, __VA_ARGS__)
+#endif
+
+# define INSTANTIATE_TEST_SUITE_P(prefix, test_suite_name, generator, ...) \
+  ::testing::internal::ParamGenerator<test_suite_name::ParamType> \
+      gtest_##prefix##test_suite_name##_EvalGenerator_() { return generator; } \
+  ::std::string gtest_##prefix##test_suite_name##_EvalGenerateName_( \
+      const ::testing::TestParamInfo<test_suite_name::ParamType>& info) { \
+    return ::testing::internal::GetParamNameGen<test_suite_name::ParamType> \
         (__VA_ARGS__)(info); \
   } \
-  int gtest_##prefix##test_case_name##_dummy_ GTEST_ATTRIBUTE_UNUSED_ = \
+  int gtest_##prefix##test_suite_name##_dummy_ GTEST_ATTRIBUTE_UNUSED_ = \
       ::testing::UnitTest::GetInstance()->parameterized_test_registry(). \
-          GetTestCasePatternHolder<test_case_name>(\
-              #test_case_name, \
+          GetTestCasePatternHolder<test_suite_name>(\
+              #test_suite_name, \
               ::testing::internal::CodeLocation(\
                   __FILE__, __LINE__))->AddTestCaseInstantiation(\
                       #prefix, \
-                      &gtest_##prefix##test_case_name##_EvalGenerator_, \
-                      &gtest_##prefix##test_case_name##_EvalGenerateName_, \
+                      &gtest_##prefix##test_suite_name##_EvalGenerator_, \
+                      &gtest_##prefix##test_suite_name##_EvalGenerateName_, \
                       __FILE__, __LINE__)
 
 }  // namespace testing
@@ -18564,9 +18724,15 @@ INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
 // The 'Types' template argument below must have spaces around it
 // since some compilers may choke on '>>' when passing a template
 // instance (e.g. Types<int>)
-# define TYPED_TEST_CASE(CaseName, Types) \
+# define TYPED_TEST_SUITE(CaseName, Types) \
   typedef ::testing::internal::TypeList< Types >::type \
       GTEST_TYPE_PARAMS_(CaseName)
+
+#if GTEST_HAS_TESTCASE
+// backward compatibility
+# define TYPED_TEST_CASE(CaseName, Types) \
+  TYPED_TEST_SUITE(CaseName, Types)
+#endif // GTEST_HAS_TESTCASE
 
 # define TYPED_TEST(CaseName, TestName) \
   template <typename gtest_TypeParam_> \
@@ -18619,9 +18785,15 @@ INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
 // The variables defined in the type-parameterized test macros are
 // static as typically these macros are used in a .h file that can be
 // #included in multiple translation units linked together.
-# define TYPED_TEST_CASE_P(CaseName) \
+# define TYPED_TEST_SUITE_P(CaseName) \
   static ::testing::internal::TypedTestCasePState \
       GTEST_TYPED_TEST_CASE_P_STATE_(CaseName)
+
+#if GTEST_HAS_TESTCASE
+// backward compatibility
+# define TYPED_TEST_CASE_P(CaseName) \
+  TYPED_TEST_SUITE_P(CaseName)
+#endif // GTEST_HAS_TESTCASE
 
 # define TYPED_TEST_P(CaseName, TestName) \
   namespace GTEST_CASE_NAMESPACE_(CaseName) { \
@@ -18639,18 +18811,25 @@ INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
   template <typename gtest_TypeParam_> \
   void GTEST_CASE_NAMESPACE_(CaseName)::TestName<gtest_TypeParam_>::TestBody()
 
-# define REGISTER_TYPED_TEST_CASE_P(CaseName, ...) \
+# define REGISTER_TYPED_TEST_SUITE_P(CaseName, ...) \
   namespace GTEST_CASE_NAMESPACE_(CaseName) { \
   typedef ::testing::internal::Templates<__VA_ARGS__>::type gtest_AllTests_; \
   } \
-  static const char* const GTEST_REGISTERED_TEST_NAMES_(CaseName) = \
-      GTEST_TYPED_TEST_CASE_P_STATE_(CaseName).VerifyRegisteredTestNames(\
-          __FILE__, __LINE__, #__VA_ARGS__)
+  static const char* const GTEST_REGISTERED_TEST_NAMES_(CaseName) \
+      GTEST_ATTRIBUTE_UNUSED_ = \
+          GTEST_TYPED_TEST_CASE_P_STATE_(CaseName).VerifyRegisteredTestNames(\
+              __FILE__, __LINE__, #__VA_ARGS__)
+
+#if GTEST_HAS_TESTCASE
+// backward compatibility
+# define REGISTER_TYPED_TEST_CASE_P(...) \
+  REGISTER_TYPED_TEST_SUITE_P(__VA_ARGS__)
+#endif // GTEST_HAS_TESTCASE
 
 // The 'Types' template argument below must have spaces around it
 // since some compilers may choke on '>>' when passing a template
 // instance (e.g. Types<int>)
-# define INSTANTIATE_TYPED_TEST_CASE_P(Prefix, CaseName, Types) \
+# define INSTANTIATE_TYPED_TEST_SUITE_P(Prefix, CaseName, Types) \
   bool gtest_##Prefix##_##CaseName GTEST_ATTRIBUTE_UNUSED_ = \
       ::testing::internal::TypeParameterizedTestCase<CaseName, \
           GTEST_CASE_NAMESPACE_(CaseName)::gtest_AllTests_, \
@@ -18659,6 +18838,12 @@ INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
               ::testing::internal::CodeLocation(__FILE__, __LINE__), \
               &GTEST_TYPED_TEST_CASE_P_STATE_(CaseName), \
               #CaseName, GTEST_REGISTERED_TEST_NAMES_(CaseName))
+
+#if GTEST_HAS_TESTCASE
+// backward compatibility
+# define INSTANTIATE_TYPED_TEST_CASE_P(Prefix, CaseName, Types) \
+  INSTANTIATE_TYPED_TEST_SUITE_P(Prefix, CaseName, Types)
+#endif // GTEST_HAS_TESTCASE
 
 #endif  // GTEST_HAS_TYPED_TEST_P
 
@@ -18769,7 +18954,11 @@ void ReportFailureInUnknownLocation(TestPartResult::Type result_type,
 // If we don't forward declare them the compiler might confuse the classes
 // in friendship clauses with same named classes on the scope.
 class Test;
-class TestCase;
+class TestSuite;
+#if GTEST_HAS_TESTCASE
+// for backward compatibility
+typedef TestSuite TestCase;
+#endif
 class TestInfo;
 class UnitTest;
 
@@ -18972,28 +19161,49 @@ class GTEST_API_ Test {
   friend class TestInfo;
 
   // Defines types for pointers to functions that set up and tear down
-  // a test case.
-  typedef internal::SetUpTestCaseFunc SetUpTestCaseFunc;
-  typedef internal::TearDownTestCaseFunc TearDownTestCaseFunc;
+  // a test suite.
+  typedef internal::SetUpTestSuiteFunc SetUpTestSuiteFunc;
+  typedef internal::TearDownTestSuiteFunc TearDownTestSuiteFunc;
+
+#if GTEST_HAS_TESTCASE
+  // Formerly, the term TestCase was used for what is named TestSuite now.
+  typedef SetUpTestSuiteFunc SetUpTestCaseFunc;
+  typedef TearDownTestSuiteFunc TearDownTestCaseFunc;
+#endif
 
   // The d'tor is virtual as we intend to inherit from Test.
   virtual ~Test();
 
-  // Sets up the stuff shared by all tests in this test case.
+  // Sets up the stuff shared by all tests in this test suite.
   //
-  // Google Test will call Foo::SetUpTestCase() before running the first
-  // test in test case Foo.  Hence a sub-class can define its own
-  // SetUpTestCase() method to shadow the one defined in the super
+  // Google Test will call Foo::SetUpTestSuite() before running the first
+  // test in test suite Foo.  Hence a sub-class can define its own
+  // SetUpTestSuite() method to shadow the one defined in the super
   // class.
-  static void SetUpTestCase() {}
+  static void SetUpTestSuite() {}
 
-  // Tears down the stuff shared by all tests in this test case.
+  // Tears down the stuff shared by all tests in this test suite.
   //
-  // Google Test will call Foo::TearDownTestCase() after running the last
-  // test in test case Foo.  Hence a sub-class can define its own
-  // TearDownTestCase() method to shadow the one defined in the super
+  // Google Test will call Foo::TearDownTestSuite() after running the last
+  // test in test suite Foo.  Hence a sub-class can define its own
+  // TearDownTestSuite() method to shadow the one defined in the super
   // class.
+  static void TearDownTestSuite() {}
+
+#if GTEST_HAS_TESTCASE
+  // For backward compatibility, provide the former *TestCase functions
+  // in parallel to the new *TestSuite.
+  static void SetUpTestCase() {}
   static void TearDownTestCase() {}
+#else
+  // Provoke a syntax error in case somebody didn't switch from *TestCase
+  // to *TestSuite.
+  // In case you see a syntax error due to expanding these macros, you
+  // probably still have SetUpTestCase() resp. TearDownTestCase() functions
+  // which should be renamed to SetUpTestSuite() resp. TearDownTestSuite().
+#define SetUpTestCase() please(); Please_rename_to_SetUpTestSuite()
+#define TearDownTestCase() please(); Please_rename_to_TearDownTestSuite()
+#endif // GTEST_HAS_TESTCASE
 
   // Returns true iff the current test has a fatal failure.
   static bool HasFatalFailure();
@@ -19161,7 +19371,7 @@ class GTEST_API_ TestResult {
 
  private:
   friend class TestInfo;
-  friend class TestCase;
+  friend class TestSuite;
   friend class UnitTest;
   friend class internal::DefaultGlobalTestPartResultReporter;
   friend class internal::ExecDeathTest;
@@ -19231,7 +19441,7 @@ class GTEST_API_ TestResult {
 
 // A TestInfo object stores the following information about a test:
 //
-//   Test case name
+//   Test suite name
 //   Test name
 //   Whether the test should be run
 //   A function pointer that creates the test object when invoked
@@ -19246,8 +19456,12 @@ class GTEST_API_ TestInfo {
   // don't inherit from TestInfo.
   ~TestInfo();
 
-  // Returns the test case name.
-  const char* test_case_name() const { return test_case_name_.c_str(); }
+  // Returns the test suite name.
+  const char* test_suite_name() const { return test_case_name_.c_str(); }
+#if GTEST_HAS_TESTCASE
+  // for backward compatibility
+  const char* test_case_name() const { return test_suite_name(); }
+#endif
 
   // Returns the test name.
   const char* name() const { return name_.c_str(); }
@@ -19308,19 +19522,25 @@ class GTEST_API_ TestInfo {
   friend class internal::DefaultDeathTestFactory;
 #endif  // GTEST_HAS_DEATH_TEST
   friend class Test;
-  friend class TestCase;
+  friend class TestSuite;
   friend class internal::UnitTestImpl;
   friend class internal::StreamingListenerTest;
   friend TestInfo* internal::MakeAndRegisterTestInfo(
-      const char* test_case_name,
+      const char* test_suite_name,
       const char* name,
       const char* type_param,
       const char* value_param,
       internal::CodeLocation code_location,
       internal::TypeId fixture_class_id,
-      Test::SetUpTestCaseFunc set_up_tc,
-      Test::TearDownTestCaseFunc tear_down_tc,
-      internal::TestFactoryBase* factory);
+      Test::SetUpTestSuiteFunc set_up_ts,
+      Test::TearDownTestSuiteFunc tear_down_ts,
+      internal::TestFactoryBase* factory
+#if GTEST_HAS_TESTCASE
+      // backward compatibility
+      , Test::SetUpTestCaseFunc set_up_tc,
+      Test::TearDownTestCaseFunc tear_down_tc
+#endif
+          );
 
   // Constructs a TestInfo object. The newly constructed instance assumes
   // ownership of the factory object.
@@ -19371,69 +19591,78 @@ class GTEST_API_ TestInfo {
   GTEST_DISALLOW_COPY_AND_ASSIGN_(TestInfo);
 };
 
-// A test case, which consists of a vector of TestInfos.
+// A test suite, which consists of a vector of TestInfos.
 //
-// TestCase is not copyable.
-class GTEST_API_ TestCase {
+// TestSuite is not copyable.
+class GTEST_API_ TestSuite {
  public:
-  // Creates a TestCase with the given name.
+  // Creates a TestSuite with the given name.
   //
-  // TestCase does NOT have a default constructor.  Always use this
-  // constructor to create a TestCase object.
+  // TestSuite does NOT have a default constructor.  Always use this
+  // constructor to create a TestSuite object.
   //
   // Arguments:
   //
-  //   name:         name of the test case
+  //   name:         name of the test suite
   //   a_type_param: the name of the test's type parameter, or NULL if
   //                 this is not a type-parameterized test.
+  //   set_up_ts:    pointer to the function that sets up the test suite
+  //   tear_down_ts: pointer to the function that tears down the test suite
   //   set_up_tc:    pointer to the function that sets up the test case
+  //                 (for backward compatibility)
   //   tear_down_tc: pointer to the function that tears down the test case
-  TestCase(const char* name, const char* a_type_param,
-           Test::SetUpTestCaseFunc set_up_tc,
-           Test::TearDownTestCaseFunc tear_down_tc);
+  //                 (for backward compatibility)
+  TestSuite(const char* name, const char* a_type_param,
+           Test::SetUpTestSuiteFunc set_up_ts,
+           Test::TearDownTestSuiteFunc tear_down_ts
+#if GTEST_HAS_TESTCASE
+           , Test::SetUpTestCaseFunc set_up_tc = NULL,
+           Test::TearDownTestCaseFunc tear_down_tc = NULL
+#endif
+           );
 
-  // Destructor of TestCase.
-  virtual ~TestCase();
+  // Destructor of TestSuite.
+  virtual ~TestSuite();
 
-  // Gets the name of the TestCase.
+  // Gets the name of the TestSuite.
   const char* name() const { return name_.c_str(); }
 
   // Returns the name of the parameter type, or NULL if this is not a
-  // type-parameterized test case.
+  // type-parameterized test suite.
   const char* type_param() const {
     if (type_param_.get() != NULL)
       return type_param_->c_str();
     return NULL;
   }
 
-  // Returns true if any test in this test case should run.
+  // Returns true if any test in this test suite should run.
   bool should_run() const { return should_run_; }
 
-  // Gets the number of successful tests in this test case.
+  // Gets the number of successful tests in this test suite.
   int successful_test_count() const;
 
-  // Gets the number of failed tests in this test case.
+  // Gets the number of failed tests in this test suite.
   int failed_test_count() const;
 
   // Gets the number of disabled tests that will be reported in the XML report.
   int reportable_disabled_test_count() const;
 
-  // Gets the number of disabled tests in this test case.
+  // Gets the number of disabled tests in this test suite.
   int disabled_test_count() const;
 
   // Gets the number of tests to be printed in the XML report.
   int reportable_test_count() const;
 
-  // Get the number of tests in this test case that should run.
+  // Get the number of tests in this test suite that should run.
   int test_to_run_count() const;
 
-  // Gets the number of all tests in this test case.
+  // Gets the number of all tests in this test suite.
   int total_test_count() const;
 
-  // Returns true iff the test case passed.
+  // Returns true iff the test suite passed.
   bool Passed() const { return !Failed(); }
 
-  // Returns true iff the test case failed.
+  // Returns true iff the test suite failed.
   bool Failed() const { return failed_test_count() > 0; }
 
   // Returns the elapsed time, in milliseconds.
@@ -19444,17 +19673,18 @@ class GTEST_API_ TestCase {
   const TestInfo* GetTestInfo(int i) const;
 
   // Returns the TestResult that holds test properties recorded during
-  // execution of SetUpTestCase and TearDownTestCase.
+  // execution of SetUpTestSuite and TearDownTestSuite
+  // resp. the former SetUpTestCase and TearDownTestCase.
   const TestResult& ad_hoc_test_result() const { return ad_hoc_test_result_; }
 
  private:
   friend class Test;
   friend class internal::UnitTestImpl;
 
-  // Gets the (mutable) vector of TestInfos in this TestCase.
+  // Gets the (mutable) vector of TestInfos in this TestSuite.
   std::vector<TestInfo*>& test_info_list() { return test_info_list_; }
 
-  // Gets the (immutable) vector of TestInfos in this TestCase.
+  // Gets the (immutable) vector of TestInfos in this TestSuite.
   const std::vector<TestInfo*>& test_info_list() const {
     return test_info_list_;
   }
@@ -19466,28 +19696,44 @@ class GTEST_API_ TestCase {
   // Sets the should_run member.
   void set_should_run(bool should) { should_run_ = should; }
 
-  // Adds a TestInfo to this test case.  Will delete the TestInfo upon
-  // destruction of the TestCase object.
+  // Adds a TestInfo to this test suite.  Will delete the TestInfo upon
+  // destruction of the TestSuite object.
   void AddTestInfo(TestInfo * test_info);
 
-  // Clears the results of all tests in this test case.
+  // Clears the results of all tests in this test suite.
   void ClearResult();
 
-  // Clears the results of all tests in the given test case.
-  static void ClearTestCaseResult(TestCase* test_case) {
-    test_case->ClearResult();
+  // Clears the results of all tests in the given test suite.
+  static void ClearTestSuiteResult(TestSuite* test_suite) {
+    test_suite->ClearResult();
   }
 
-  // Runs every test in this TestCase.
+  // Runs every test in this TestSuite.
   void Run();
 
-  // Runs SetUpTestCase() for this TestCase.  This wrapper is needed
-  // for catching exceptions thrown from SetUpTestCase().
-  void RunSetUpTestCase() { (*set_up_tc_)(); }
+  // Runs SetUpTestSuite() for this TestSuite.  This wrapper is needed
+  // for catching exceptions thrown from SetUpTestSuite().
+  // The former SetUpTestCase() is also called if available.
+  void RunSetUpTestSuite() {
+    (*set_up_ts_)();
+#if GTEST_HAS_TESTCASE
+    // for backward compatibility
+    if(set_up_tc_)
+      (*set_up_tc_)();
+#endif
+  }
 
-  // Runs TearDownTestCase() for this TestCase.  This wrapper is
+  // Runs TearDownTestSuite() for this TestSuite.  This wrapper is
   // needed for catching exceptions thrown from TearDownTestCase().
-  void RunTearDownTestCase() { (*tear_down_tc_)(); }
+  // The former TearDownTestCase() is also called if available.
+  void RunTearDownTestSuite() {
+#if GTEST_HAS_TESTCASE
+    // for backward compatibility
+    if(tear_down_tc_)
+      (*tear_down_tc_)();
+#endif
+    (*tear_down_ts_)();
+  }
 
   // Returns true iff test passed.
   static bool TestPassed(const TestInfo* test_info) {
@@ -19520,13 +19766,13 @@ class GTEST_API_ TestCase {
     return test_info->should_run();
   }
 
-  // Shuffles the tests in this test case.
+  // Shuffles the tests in this test suite.
   void ShuffleTests(internal::Random* random);
 
   // Restores the test order to before the first shuffle.
   void UnshuffleTests();
 
-  // Name of the test case.
+  // Name of the test suite.
   std::string name_;
   // Name of the parameter type, or NULL if this is not a typed or a
   // type-parameterized test.
@@ -19538,20 +19784,27 @@ class GTEST_API_ TestCase {
   // shuffling and restoring the test order.  The i-th element in this
   // vector is the index of the i-th test in the shuffled test list.
   std::vector<int> test_indices_;
+  // Pointer to the function that sets up the test suite.
+  Test::SetUpTestSuiteFunc set_up_ts_;
+  // Pointer to the function that tears down the test suite.
+  Test::TearDownTestSuiteFunc tear_down_ts_;
+#if GTEST_HAS_TESTCASE
+  // For backward compatibiliy:
   // Pointer to the function that sets up the test case.
   Test::SetUpTestCaseFunc set_up_tc_;
   // Pointer to the function that tears down the test case.
   Test::TearDownTestCaseFunc tear_down_tc_;
+#endif
   // True iff any test in this test case should run.
   bool should_run_;
   // Elapsed time, in milliseconds.
   TimeInMillis elapsed_time_;
-  // Holds test properties recorded during execution of SetUpTestCase and
-  // TearDownTestCase.
+  // Holds test properties recorded during execution of SetUpTestSuite and
+  // TearDownTestSuite resp. the former SetUpTestCase and TearDownTestCase.
   TestResult ad_hoc_test_result_;
 
-  // We disallow copying TestCases.
-  GTEST_DISALLOW_COPY_AND_ASSIGN_(TestCase);
+  // We disallow copying TestSuite.
+  GTEST_DISALLOW_COPY_AND_ASSIGN_(TestSuite);
 };
 
 // An Environment object is capable of setting up and tearing down an
@@ -19606,8 +19859,13 @@ class TestEventListener {
   // Fired after environment set-up for each iteration of tests ends.
   virtual void OnEnvironmentsSetUpEnd(const UnitTest& unit_test) = 0;
 
-  // Fired before the test case starts.
-  virtual void OnTestCaseStart(const TestCase& test_case) = 0;
+  // Fired before the test suite starts.
+  virtual void OnTestSuiteStart(const TestSuite& test_suite) = 0;
+
+#if GTEST_HAS_TESTCASE
+  // Backward compatibility - use OnTestSuiteStart() now
+  virtual void OnTestCaseStart(const TestSuite& test_suite) = 0;
+#endif
 
   // Fired before the test starts.
   virtual void OnTestStart(const TestInfo& test_info) = 0;
@@ -19618,8 +19876,13 @@ class TestEventListener {
   // Fired after the test ends.
   virtual void OnTestEnd(const TestInfo& test_info) = 0;
 
-  // Fired after the test case ends.
-  virtual void OnTestCaseEnd(const TestCase& test_case) = 0;
+  // Fired after the test suite ends.
+  virtual void OnTestSuiteEnd(const TestSuite& test_suite) = 0;
+
+#if GTEST_HAS_TESTCASE
+    // Backward compatibility - use OnTestSuiteEnd() now
+  virtual void OnTestCaseEnd(const TestSuite& test_suite) = 0;
+#endif
 
   // Fired before environment tear-down for each iteration of tests starts.
   virtual void OnEnvironmentsTearDownStart(const UnitTest& unit_test) = 0;
@@ -19633,6 +19896,37 @@ class TestEventListener {
 
   // Fired after all test activities have ended.
   virtual void OnTestProgramEnd(const UnitTest& unit_test) = 0;
+
+ private:
+#if ! GTEST_HAS_TESTCASE
+  // During conversion of test projects from the former TestCase API to
+  // the new TestSuite API, it is helpful to signal if some of the former
+  // virtual methods are still in use.
+  // The mechanism is copied from class Test above:
+  // The declaration of the following method is solely for catching such
+  // an error at compile time:
+  //
+  //   - The return type is deliberately chosen to be not void, so it
+  //   will be a conflict if void OnTestCaseStart() is declared in the user's
+  //   test fixture.
+  //
+  //   - This method is private, so it will be another compiler error
+  //   if the method is called from the user's test fixture.
+  //
+  // DO NOT OVERRIDE THESE FUNCTIONS.
+  //
+  // If you see an error about overriding the following functions or
+  // about it being private, you have to rename OnTestCaseStart to OnTestSuiteStart
+  // and OnTestCaseEnd to OnTestSuiteEnd respectively in your code.
+  struct Please_convert_to_the_new_method_names {};
+  virtual Please_convert_to_the_new_method_names* OnTestCaseStart(const TestSuite& /*test_suite*/) {
+    return NULL;
+  }
+  virtual Please_convert_to_the_new_method_names* OnTestCaseEnd(const TestSuite& /*test_suite*/) {
+    return NULL;
+  }
+
+#endif // GTEST_HAS_TESTCASE
 };
 
 // The convenience class for users who need to override just one or two
@@ -19647,11 +19941,19 @@ class EmptyTestEventListener : public TestEventListener {
                                     int /*iteration*/) {}
   virtual void OnEnvironmentsSetUpStart(const UnitTest& /*unit_test*/) {}
   virtual void OnEnvironmentsSetUpEnd(const UnitTest& /*unit_test*/) {}
-  virtual void OnTestCaseStart(const TestCase& /*test_case*/) {}
+  virtual void OnTestSuiteStart(const TestSuite& /*test_suite*/) {}
+#if GTEST_HAS_TESTCASE
+    // Backward compatibility - use OnTestSuiteStart() now
+  virtual void OnTestCaseStart(const TestSuite& /*test_suite*/) {}
+#endif
   virtual void OnTestStart(const TestInfo& /*test_info*/) {}
   virtual void OnTestPartResult(const TestPartResult& /*test_part_result*/) {}
   virtual void OnTestEnd(const TestInfo& /*test_info*/) {}
-  virtual void OnTestCaseEnd(const TestCase& /*test_case*/) {}
+  virtual void OnTestSuiteEnd(const TestSuite& /*test_suite*/) {}
+#if GTEST_HAS_TESTCASE
+    // Backward compatibility - use OnTestSuiteEnd() now
+  virtual void OnTestCaseEnd(const TestSuite& /*test_suite*/) {}
+#endif
   virtual void OnEnvironmentsTearDownStart(const UnitTest& /*unit_test*/) {}
   virtual void OnEnvironmentsTearDownEnd(const UnitTest& /*unit_test*/) {}
   virtual void OnTestIterationEnd(const UnitTest& /*unit_test*/,
@@ -19696,7 +19998,7 @@ class GTEST_API_ TestEventListeners {
   }
 
  private:
-  friend class TestCase;
+  friend class TestSuite;
   friend class TestInfo;
   friend class internal::DefaultGlobalTestPartResultReporter;
   friend class internal::NoExecDeathTest;
@@ -19737,7 +20039,7 @@ class GTEST_API_ TestEventListeners {
   GTEST_DISALLOW_COPY_AND_ASSIGN_(TestEventListeners);
 };
 
-// A UnitTest consists of a vector of TestCases.
+// A UnitTest consists of a vector of TestSuites.
 //
 // This is a singleton class.  The only instance of UnitTest is
 // created when UnitTest::GetInstance() is first called.  This
@@ -19766,9 +20068,9 @@ class GTEST_API_ UnitTest {
   // was executed.  The UnitTest object owns the string.
   const char* original_working_dir() const;
 
-  // Returns the TestCase object for the test that's currently running,
+  // Returns the TestSuite object for the test that's currently running,
   // or NULL if no test is running.
-  const TestCase* current_test_case() const
+  const TestSuite* current_test_case() const
       GTEST_LOCK_EXCLUDED_(mutex_);
 
   // Returns the TestInfo object for the test that's currently running,
@@ -19788,18 +20090,26 @@ class GTEST_API_ UnitTest {
       GTEST_LOCK_EXCLUDED_(mutex_);
 #endif  // GTEST_HAS_PARAM_TEST
 
-  // Gets the number of successful test cases.
-  int successful_test_case_count() const;
+  // Gets the number of successful test suites.
+  int successful_test_suite_count() const;
 
-  // Gets the number of failed test cases.
-  int failed_test_case_count() const;
+  // Gets the number of failed test suites.
+  int failed_test_suite_count() const;
 
-  // Gets the number of all test cases.
-  int total_test_case_count() const;
+  // Gets the number of all test suites.
+  int total_test_suite_count() const;
 
-  // Gets the number of all test cases that contain at least one test
+  // Gets the number of all test suites that contain at least one test
   // that should run.
-  int test_case_to_run_count() const;
+  int test_suite_to_run_count() const;
+
+#if GTEST_HAS_TESTCASE
+  // backward compatibility
+  int successful_test_case_count() const { return successful_test_suite_count(); }
+  int failed_test_case_count() const { return failed_test_suite_count(); }
+  int total_test_case_count() const { return total_test_suite_count(); }
+  int test_case_to_run_count() const { return test_suite_to_run_count(); }
+#endif // GTEST_HAS_TESTCASE
 
   // Gets the number of successful tests.
   int successful_test_count() const;
@@ -19836,9 +20146,14 @@ class GTEST_API_ UnitTest {
   // or something outside of all tests failed).
   bool Failed() const;
 
-  // Gets the i-th test case among all the test cases. i can range from 0 to
-  // total_test_case_count() - 1. If i is not in that range, returns NULL.
-  const TestCase* GetTestCase(int i) const;
+  // Gets the i-th test suite among all the test suites. i can range from 0 to
+  // total_test_suite_count() - 1. If i is not in that range, returns NULL.
+  const TestSuite* GetTestSuite(int i) const;
+
+#if GTEST_HAS_TESTCASE
+  // backward compatibility
+  const TestSuite* GetTestCase(int i) const { return GetTestSuite(i); }
+#endif // GTEST_HAS_TESTCASE
 
   // Returns the TestResult containing information on test failures and
   // properties logged outside of individual test cases.
@@ -19880,13 +20195,13 @@ class GTEST_API_ UnitTest {
 
   // Gets the i-th test case among all the test cases. i can range from 0 to
   // total_test_case_count() - 1. If i is not in that range, returns NULL.
-  TestCase* GetMutableTestCase(int i);
+  TestSuite* GetMutableTestCase(int i);
 
   // Accessors for the implementation object.
   internal::UnitTestImpl* impl() { return impl_; }
   const internal::UnitTestImpl* impl() const { return impl_; }
 
-  // These classes and funcions are friends as they need to access private
+  // These classes and functions are friends as they need to access private
   // members of UnitTest.
   friend class Test;
   friend class internal::AssertHelper;
@@ -20456,13 +20771,13 @@ class TestWithParam : public Test, public WithParamInterface<T> {
 // AssertionResult. For more information on how to use AssertionResult with
 // these macros see comments on that class.
 #define EXPECT_TRUE(condition) \
-  GTEST_TEST_BOOLEAN_(condition, #condition, false, true, \
+  GTEST_TEST_BOOLEAN_((condition), #condition, false, true, \
                       GTEST_NONFATAL_FAILURE_)
 #define EXPECT_FALSE(condition) \
   GTEST_TEST_BOOLEAN_(!(condition), #condition, true, false, \
                       GTEST_NONFATAL_FAILURE_)
 #define ASSERT_TRUE(condition) \
-  GTEST_TEST_BOOLEAN_(condition, #condition, false, true, \
+  GTEST_TEST_BOOLEAN_((condition), #condition, false, true, \
                       GTEST_FATAL_FAILURE_)
 #define ASSERT_FALSE(condition) \
   GTEST_TEST_BOOLEAN_(!(condition), #condition, true, false, \
@@ -21110,11 +21425,11 @@ bool StaticAssertTypeEq() {
 
 // Defines a test.
 //
-// The first parameter is the name of the test case, and the second
-// parameter is the name of the test within the test case.
+// The first parameter is the name of the test suite, and the second
+// parameter is the name of the test within the test suite.
 //
-// The convention is to end the test case name with "Test".  For
-// example, a test case for the Foo class can be named FooTest.
+// The convention is to end the test suite name with "Test".  For
+// example, a test suite for the Foo class can be named FooTest.
 //
 // Test code should appear between braces after an invocation of
 // this macro.  Example:
@@ -21133,24 +21448,24 @@ bool StaticAssertTypeEq() {
 // code.  GetTestTypeId() is guaranteed to always return the same
 // value, as it always calls GetTypeId<>() from the Google Test
 // framework.
-#define GTEST_TEST(test_case_name, test_name)\
-  GTEST_TEST_(test_case_name, test_name, \
+#define GTEST_TEST(test_suite_name, test_name)\
+  GTEST_TEST_(test_suite_name, test_name, \
               ::testing::Test, ::testing::internal::GetTestTypeId())
 
 // Define this macro to 1 to omit the definition of TEST(), which
 // is a generic name and clashes with some other libraries.
 #if !GTEST_DONT_DEFINE_TEST
-# define TEST(test_case_name, test_name) GTEST_TEST(test_case_name, test_name)
+# define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
 #endif
 
 // Defines a test that uses a test fixture.
 //
 // The first parameter is the name of the test fixture class, which
-// also doubles as the test case name.  The second parameter is the
-// name of the test within the test case.
+// also doubles as the test suite name.  The second parameter is the
+// name of the test within the test suite.
 //
 // A test fixture class must be declared earlier.  The user should put
-// his test code between braces after using this macro.  Example:
+// the test code between braces after using this macro.  Example:
 //
 //   class FooTest : public testing::Test {
 //    protected:
@@ -21172,6 +21487,10 @@ bool StaticAssertTypeEq() {
 #define TEST_F(test_fixture, test_name)\
   GTEST_TEST_(test_fixture, test_name, test_fixture, \
               ::testing::internal::GetTypeId<test_fixture>())
+
+// Returns a path to temporary directory.
+// Tries to determine an appropriate directory for the platform.
+GTEST_API_ std::string TempDir();
 
 }  // namespace testing
 
