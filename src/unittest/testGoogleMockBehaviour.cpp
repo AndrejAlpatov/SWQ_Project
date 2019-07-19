@@ -24,9 +24,7 @@ class SomeHelper {
             cout << "[v v v v v ] Constructor of base object" << endl;
         }
 
-        virtual ~SomeHelper() {
-            cout << "[^ ^ ^ ^ ^ ] Destructor of base object " << endl;
-        }
+        virtual ~SomeHelper();
 
         virtual void a() {
             cout << "[!?!?!?!?!?] SomeUsefulThing.a() called" << endl;
@@ -37,9 +35,13 @@ class SomeHelper {
             return val+1;
         }
 };
+// kept outside the class declaration to avoid error messages in QtCreator
+SomeHelper::~SomeHelper() {
+    cout << "[^ ^ ^ ^ ^ ] Destructor of base object " << endl;
+}
 
 //============================================================================
-/// This is the "production code" class, which shall be tested.
+/// This is the "production code" class, which shall be tested.´
 /// Usually, this class will be in a header file which can be included here.
 /// This class uses the SomeHelper object which is injected via the constructor.
 //============================================================================
@@ -63,9 +65,13 @@ class SomeThing {
 //============================================================================
 class MockOfSomeHelper : public SomeHelper {
     public:
+        ~MockOfSomeHelper();    // just to avoid error messages in QtCreator
         MOCK_METHOD0(a, void());
-        MOCK_CONST_METHOD1(b, int(int)); // Unfortunately QtCreator doubts about this syntax.
+        MOCK_CONST_METHOD1(b, int(int));
 };
+MockOfSomeHelper::~MockOfSomeHelper() {
+    // nothing else needed, just to avoid error messages in QtCreator
+}
 
 //============================================================================
 /// This is the test fixture, and it also gives the name prefix for the tests.
@@ -73,12 +79,17 @@ class MockOfSomeHelper : public SomeHelper {
 class aSomeThing : public ::testing::Test {
     protected:
         aSomeThing()
-            : someThing(helperMock)
-        {}
+            : someThing(helperMock) {
+            // nothing else needed
+        }
+        ~aSomeThing();    // just to avoid error messages in QtCreator
 
         MockOfSomeHelper helperMock;
         SomeThing someThing;
 };
+aSomeThing::~aSomeThing() {
+    // nothing else needed, just to avoid error messages in QtCreator
+}
 
 /// \test Test that SomeThing::go() calls SomeHelper::a() and SomeHelper::b().
 /// The initialization of someThing is done in the test fixture aSomeThing.
