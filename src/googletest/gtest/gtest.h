@@ -18311,7 +18311,7 @@ internal::CartesianProductHolder10<Generator1, Generator2, Generator3,
     return ::testing::internal::GetParamNameGen<test_suite_name::ParamType> \
         (__VA_ARGS__)(info); \
   } \
-  int gtest_##prefix##test_suite_name##_dummy_ GTEST_ATTRIBUTE_UNUSED_ = \
+  static int gtest_##prefix##test_suite_name##_dummy_ GTEST_ATTRIBUTE_UNUSED_ = \
       ::testing::UnitTest::GetInstance()->parameterized_test_registry(). \
           GetTestCasePatternHolder<test_suite_name>(\
               #test_suite_name, \

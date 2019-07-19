@@ -43,7 +43,12 @@ ostream & operator << (ostream & os, AdderTestData const & data) {
 class AdderTest : public ::testing::TestWithParam<AdderTestData> {
     // You can implement all the usual fixture class members here.
     // To access the test parameter, call GetParam() from this class.
+public:
+  ~AdderTest(); // just to avoid error messages in QtCreator
 };
+AdderTest::~AdderTest(){
+  // nothing needed here - just to avoid error messages in QtCreator
+}
 
 
 /// Now we can define the generic test using TEST_P
@@ -72,7 +77,7 @@ INSTANTIATE_TEST_SUITE_P(TeenValues, AdderTest,
                         );
 
 // You can also read from a STL container or C array.
-vector<AdderTestData> dataContainer = {
+static vector<AdderTestData> dataContainer = {
     { 20, 22, 42 },
     { 31, 33, 64 }
 };
@@ -86,7 +91,12 @@ INSTANTIATE_TEST_SUITE_P(FromVector, AdderTest,
 class AdderTestWithTuple : public ::testing::TestWithParam<::testing::tuple<int,int> > {
     // You can implement all the usual fixture class members here.
     // To access the test parameter, call GetParam() from this class.
+  public:
+    ~AdderTestWithTuple(); // just to avoid error messages in QtCreator
 };
+AdderTestWithTuple::~AdderTestWithTuple(){
+    // nothing needed here - just to avoid error messages in QtCreator
+}
 
 
 /// Now we can define the generic test using TEST_P
