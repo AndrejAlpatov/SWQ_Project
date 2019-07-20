@@ -21,7 +21,8 @@ set -x
 
 MAKE=make        # make, will be modified depending on the os
 QMAKE=qmake      # qmake, will be modified depending on the os
-PROJECT=../src/*.pro	# relative to build directory
+pwd
+PROJECT=$(echo src/*.pro)	# relative to base directory
 
 
 # adapt build process to different platforms
@@ -47,7 +48,7 @@ fi
     cd build 
       
     # be sure we have the build config ready
-    [ -e "MakeFile" ] || $QMAKE -recursive "$PROJECT" || exit $?
+    [ -e "MakeFile" ] || $QMAKE -recursive "../$PROJECT" || exit $?
 
     $MAKE $@
     exit $?
