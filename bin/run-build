@@ -21,7 +21,7 @@ set -x
 
 MAKE=make        # make, will be modified depending on the os
 QMAKE=qmake      # qmake, will be modified depending on the os
-PROJECT=../src/hello-googlemock.pro	# relative to build directory
+PROJECT=../src/*.pro	# relative to build directory
 
 
 # adapt build process to different platforms
