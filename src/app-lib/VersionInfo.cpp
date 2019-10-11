@@ -10,6 +10,7 @@
 
 const QString VersionInfo::buildTag(BUILDTAG);
 const QString VersionInfo::version(GITVERSION);
+const QString VersionInfo::branch(BRANCH);
 
 QString VersionInfo::getVersion()
 {
@@ -19,4 +20,9 @@ QString VersionInfo::getVersion()
 QString VersionInfo::getBuildTag()
 {
     return buildTag;
+}
+
+QString VersionInfo::getBranchName()
+{
+    return branch;
 }
