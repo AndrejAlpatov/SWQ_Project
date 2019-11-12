@@ -50,4 +50,5 @@ int main( int argc, char ** argv )
     cout <<  hello.toStdString() << endl
           << "Version: " << VersionInfo::getVersion().toStdString()
           << " (" << VersionInfo::getBuildTag().toStdString() << ")" << endl;
+    cout << "Branch: " << VersionInfo::getBranchName().toStdString() << endl;
 }

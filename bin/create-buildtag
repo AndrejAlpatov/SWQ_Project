@@ -11,6 +11,8 @@ TMPFILE=$TARGET.$$.tmp
 
 REPO_VERSION=$(git describe --tags --always --long --dirty)
 
+ACTIVE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
 # if built from jenkins/hudson, BUILD_TAG is set already
 if [ -z "$BUILD_TAG" ]; then
         BUILD_TAG="manual build by \\\"$(git config --get user.name)\\\" <$(id -un)> on $(date +%F)"
@@ -22,6 +24,7 @@ cat > "$TMPFILE" <<-EOF
 	#define _GENERATED_VERSION_H
 	char const * const BUILDTAG = "${BUILD_TAG}";
 	char const * const GITVERSION = "${REPO_VERSION}";
+    char const * const BRANCH = "${ACTIVE_BRANCH}";
 	#endif
 EOF
 

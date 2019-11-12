@@ -27,6 +27,21 @@ TEST(VersionInfo,getVersionIsPrintable) {
     ASSERT_TRUE( Helpers::isPrintable(version) );
 }
 
+/// \test VersionInfo::getBranchName() returns a non-empty string.
+TEST(VersionInfo,getBranchIsNotEmpty){
+    QString branch = VersionInfo::getBranchName();
+    cout << "[          ] Branch: " << branch.toStdString() << endl;
+
+    ASSERT_FALSE(branch.isEmpty());
+}
+
+/// \test VersionInfo::getBranchName() returns a printable string
+TEST(VersionInfo,getBranchNameIsPrintable) {
+    QString branch = VersionInfo::getBranchName();
+
+    ASSERT_TRUE( Helpers::isPrintable(branch) );
+}
+
 /// \test VersionInfo::getBuildTag() returns a non-empty string
 TEST(VersionInfo,getBuildTagIsNotEmpty) {
     QString buildTag = VersionInfo::getBuildTag();
