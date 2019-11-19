@@ -20,10 +20,12 @@ class VersionInfo
     public:
         static QString getVersion();    ///< Get the version provided by git.
         static QString getBuildTag();   ///< Get the build tag provided by jenkins.
+        static QString getBranchName(); ///< Get the currentbranch name.
 
     private:
         static const QString buildTag;
         static const QString version;
+        static const QString branch;
 };
 
 #endif
