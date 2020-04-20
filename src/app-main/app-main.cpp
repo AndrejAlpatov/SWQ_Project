@@ -2,9 +2,7 @@
 /// \file
 /// \ingroup    g_main
 /// \brief      Contains the application's main function.
-/// \details    We use a Qt QCoreApplication here (i.e. without GUI) and just
-///             demonstrate internationalization (i18n) by translating the
-///             welcome strings.
+/// \details    In this file, a 2048 game is launched with fully implemented game logic
 ///
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
@@ -47,8 +45,12 @@ int main( int argc, char ** argv )
     installTranslator(app, translator);
 
     QString hello = QObject::tr("Hello Application World!");
-    cout <<  hello.toStdString() << endl
-          << "Version: " << VersionInfo::getVersion().toStdString()
-          << " (" << VersionInfo::getBuildTag().toStdString() << ")" << endl;
-    cout << "Branch: " << VersionInfo::getBranchName().toStdString() << endl;
+   // cout <<  hello.toStdString() << endl
+      //    << "Version: " << VersionInfo::getVersion().toStdString()
+      //    << " (" << VersionInfo::getBuildTag().toStdString() << ")" << endl;
+    //cout << "Branch: " << VersionInfo::getBranchName().toStdString() << endl;
+
+    PlayingField a;
+
+
 }

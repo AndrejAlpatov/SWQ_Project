@@ -11,5 +11,7 @@
 #define APPLIB_H
 
 #include "VersionInfo.h"
+#include "PlayingField.h"
+#include "Tile.h"
 
 #endif

@@ -14,8 +14,9 @@ HEADERS += \
     Helpers.h
 
 SOURCES += \
+    TestTile.cpp \
     testmain.cpp \
-    testVersionInfo.cpp
+    testVersionInfo.cpp \
 
 OTHER_FILES += unittest.dox
 
