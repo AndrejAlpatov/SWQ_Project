@@ -51,6 +51,6 @@ int main( int argc, char ** argv )
     //cout << "Branch: " << VersionInfo::getBranchName().toStdString() << endl;
 
     PlayingField a;
-
+    a.start();
 
 }

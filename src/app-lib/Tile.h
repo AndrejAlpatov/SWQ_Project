@@ -11,9 +11,6 @@
 
 /// Diese Klasse beschreibt ein Feld des Schachbrett
 /// Inhaelt drei Getter()
-/// The CalenderDate takes care of correct date entry
-/// The definition of invalid dates will be rejected by throwing
-/// an appropriate exception
 
 class Tile{
 public:

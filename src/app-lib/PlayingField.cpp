@@ -18,10 +18,6 @@ PlayingField::PlayingField()
     setWerteAnFelder(freiFeldSuche());
 
     ausgabe();
-
-    while(1){
-        move();
-    }
 }
 
 void PlayingField::ausgabe()
@@ -33,6 +29,38 @@ void PlayingField::ausgabe()
         cout<<endl;
     }
     cout<<"******************************"<<endl;
+}
+
+void PlayingField::start()
+{
+    while(1){
+        move();
+    }
+}
+
+void PlayingField::setAlleFelderBesetzt()
+{
+    for(int i=0;i<4;i++){
+        for(int j=0; j<4;j++){
+            SpielFeld[i][j].setFrei(false);
+        }
+    }
+}
+
+void PlayingField::setEinFeldFrei()
+{
+    int xZufall=rand()%4;//Gueltige Werte (0..3)
+    int yZufall=rand()%4;//Gueltige Werte (0..3)
+    SpielFeld[xZufall][yZufall].setFrei(true);
+
+//    for(int i=0;i<4; i++){
+//        for(int j=0; j<4;j++){
+//            cout<<SpielFeld[i][j].getFrei()<<"\t";
+//            }
+//        cout<<endl;
+//    }
+//    cout<<"******************************"<<endl;
+
 }
 
 unsigned int PlayingField::zufallZahl()
@@ -50,6 +78,16 @@ unsigned int PlayingField::zufallZahl()
 int * PlayingField::freiFeldSuche()
 {
     static int koordinaten[2];//Fuer Rueckgabewerte
+    const int unset =-1;
+
+    //Hilfsarray fuer Berechnung besetzter Felder
+    int arrayHilfe[4][4];
+    //Alle Elemente mit "1" markieren
+    for(int i=0;i<4; i++){
+        for(int j=0; j<4;j++){
+            arrayHilfe[i][j]=1;
+            }
+    }
 
     //Berechnung der Koordinaten der freien Felder
     while (1) {
@@ -60,9 +98,25 @@ int * PlayingField::freiFeldSuche()
         if(SpielFeld[xZufall][yZufall].getFrei()){
             koordinaten[0]=xZufall;
             koordinaten[1]=yZufall;
-            return koordinaten;
+            return koordinaten;       
+         }
+
+        //wenn nicht frei
+        else{
+            arrayHilfe[xZufall][yZufall]=0;//Mit "0" markieren
+            int summ=0;//Wenn alle Felder besetzt sind, summ wird unveraendert
+            for(int i=0;i<4; i++){
+                for(int j=0; j<4;j++){
+                    summ+=arrayHilfe[i][j];//Anzahl freier Felder
+                    }
+            }
+            if(!summ){//Falls es  kein freies Feld gibt
+                koordinaten[0]=unset;
+                koordinaten[1]=unset;
+                return koordinaten;
+            }
         }
-    }
+     }
 }
 
 void PlayingField::setWerteAnFelder(int *arr)

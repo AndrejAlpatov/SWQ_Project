@@ -1,9 +1,15 @@
 //============================================================================
 /// \file
 /// \ingroup    g_applib
-/// \brief      Contains the application library  interface definition.
-/// \details    In this example it's playing field header file
+/// \brief      PlayingFeld class
+/// \details    In this file is playing field header file
 /// \copyright  GNU General Public License (GPL) Version 3
+/// \todo Destructor soll noch geschrieben werden
+/// \todo Ausgabefunktion muss noch modifiziert werden
+/// \todo Ausgabefunktion muss noch modifiziert werden
+/// \todo winFruefung() Funktion muss noch modifiziert werden
+/// \todo gameOver() muss noch modifiziert werden
+/// \todo Noch einmal alle vorherige Kommentare ueberpruefen (auf Russisch loeschen)
 //============================================================================
 #ifndef PLAYINGFIELD_H
 #define PLAYINGFIELD_H
@@ -18,7 +24,6 @@ using namespace std;
 
 /// Diese Klasse beschreibt ein Feld des Schachbrett
 /// Inhaelt drei Getter()
-/// The CalenderDate takes care of correct date entry
 /// The definition of invalid dates will be rejected by throwing
 /// an appropriate exception
 
@@ -27,13 +32,18 @@ class PlayingField{
 public:
     PlayingField();
     void ausgabe();                     //Ausgabe des Bretts
+    void start();
+
+    void setAlleFelderBesetzt();        //For Test freiFeldSuche()
+    void setEinFeldFrei();              //For Test freiFeldSuche()
+
+    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
 private:
     Tile ** SpielFeld;//Brett als Zweidimensionales Array
-    int richtung;     //Gueltige Werte (0..4)
+    int richtung;     ///<Gueltige Werte (0..4)
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
-    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
     void setWerteAnFelder(int * arr);   //Set Werte an Feld
     void gameOver();                    //Ende des Spiels
     void move();

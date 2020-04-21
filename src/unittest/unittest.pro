@@ -14,6 +14,7 @@ HEADERS += \
     Helpers.h
 
 SOURCES += \
+    TestPlayingField.cpp \
     TestTile.cpp \
     testmain.cpp \
     testVersionInfo.cpp \
