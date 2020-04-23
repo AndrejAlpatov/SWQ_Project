@@ -9,9 +9,13 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 HEADERS += app-lib.h \
+    PlayingField.h \
+    Tile.h \
     VersionInfo.h \
 
 SOURCES += \
+    PlayingField.cpp \
+    Tile.cpp \
     VersionInfo.cpp \
 
 OTHER_FILES += applib.dox

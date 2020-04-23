@@ -14,8 +14,10 @@ HEADERS += \
     Helpers.h
 
 SOURCES += \
+    TestPlayingField.cpp \
+    TestTile.cpp \
     testmain.cpp \
-    testVersionInfo.cpp
+    testVersionInfo.cpp \
 
 OTHER_FILES += unittest.dox
 

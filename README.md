@@ -1,6 +1,6 @@
-# Hello Googlemock Project
+# 2048 Project
 
-Welcome to the "Hello Googlemock" project - a small example of using [Google
+Welcome to my new Project 2048, that I'll further develop [Google
 Test](https://github.com/google/googletest/blob/master/README.md) and [Google
 Mock](https://github.com/google/googletest/blob/master/googlemock/README.md) as
 an [xUnit]( https://en.wikipedia.org/wiki/XUnit) like [Unit

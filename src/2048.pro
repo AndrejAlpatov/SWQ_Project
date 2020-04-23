@@ -1,4 +1,4 @@
-# Sample qmake project file
+# 2048 project file
 
 TEMPLATE = subdirs
 SUBDIRS = app-main \

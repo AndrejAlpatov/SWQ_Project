@@ -1,6 +1,6 @@
 # qmake project file to build the application
 
-TARGET = helloworld
+TARGET = 2048
 TEMPLATE = app
 
 QT -= gui
