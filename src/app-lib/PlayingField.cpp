@@ -858,8 +858,23 @@ void PlayingField::move(){
 }
 
 int PlayingField::onKeyboardPush(){
+    char eingabe;
+
     while(true){
-        if(kbhit()) {// слушатель нажатия на клаву
+        cout << "Geben sie die Richtung ein (w-up, s-down, a-left, b-right)"<<endl;
+        cin>>eingabe;
+
+        switch(eingabe) {// ждёт нажатия на клаву без Enter после этого
+            case 'w': cout << "Up" << endl; richtung=4; return 0;//up
+            case 's': cout << "Down" << endl; richtung=3; return 0;//down
+            case 'a': cout << "left" << endl; richtung=2; return 0;//links
+            case 'b': cout << "Right"<< endl; richtung=1; return 0;//rechts
+            case 'n': gameOver(); break;
+            case 'q': gameOver(); break;
+        default: break;
+        }
+
+       /* if(kbhit()) {// слушатель нажатия на клаву
             switch(getch()) {// ждёт нажатия на клаву без Enter после этого
                 case 72: cout << "Up" << endl; richtung=4; return 0;//up
                 case 80: cout << "Down" << endl; richtung=3; return 0;//down
@@ -868,7 +883,7 @@ int PlayingField::onKeyboardPush(){
                 case 'n': gameOver(); break;
                 case 'q': gameOver(); break;
             }
-        }
+        }*/
     }
 }
 

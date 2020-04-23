@@ -17,7 +17,7 @@
 #include<time.h>
 #include<iostream>
 //#include <windows.h>
-#include <conio.h>
+//#include <conio.h> fuer Windows Version
 #include <QString>
 
 using namespace std;
@@ -32,7 +32,7 @@ class PlayingField{
 public:
     PlayingField();
     void ausgabe();                     //Ausgabe des Bretts
-    void start();
+    void start();                       //Start of the game
 
     void setAlleFelderBesetzt();        //For Test freiFeldSuche()
     void setEinFeldFrei();              //For Test freiFeldSuche()
@@ -46,10 +46,10 @@ private:
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld
     void gameOver();                    //Ende des Spiels
-    void move();
-    int onKeyboardPush();
-    void obFreifeldGibt();
-    void winPruefung();
+    void move();                        //Move
+    int onKeyboardPush();               //Bearbeitung des Tastedrucks
+    void obFreifeldGibt();              //Ueberpruefung ob mindestens ein Feld frei ist
+    void winPruefung();                 //Ueberpruefung ob das Ziel des Spoels schon erreicht ist
 
 };
 
