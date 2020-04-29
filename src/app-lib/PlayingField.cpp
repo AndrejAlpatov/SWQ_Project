@@ -1,8 +1,11 @@
 #include "PlayingField.h"
+#include<VersionInfo.h>
 
 PlayingField::PlayingField(wostream & os)
 {
-    os<<"Welcome to 2048"<<endl;
+    os <<"Welcome to 2048"<<endl;
+    os << L"Version: " << VersionInfo::getVersion().toStdWString()
+       << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
 
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
@@ -870,7 +873,7 @@ int PlayingField::onKeyboardPush(){
             case 'w': cout << "Up" << endl; richtung=4; return 0;//up
             case 's': cout << "Down" << endl; richtung=3; return 0;//down
             case 'a': cout << "left" << endl; richtung=2; return 0;//links
-            case 'b': cout << "Right"<< endl; richtung=1; return 0;//rechts
+            case 'd': cout << "Right"<< endl; richtung=1; return 0;//rechts
             case 'n': gameOver(); break;
             case 'q': gameOver(); break;
         default: break;
