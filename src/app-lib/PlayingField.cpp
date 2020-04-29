@@ -1,6 +1,6 @@
 #include "PlayingField.h"
 
-PlayingField::PlayingField()
+PlayingField::PlayingField(wostream &/*os*/)
 {
     //Array-Initialisierung
     SpielFeld = new Tile *[4];

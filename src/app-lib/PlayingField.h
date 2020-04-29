@@ -15,10 +15,10 @@
 #define PLAYINGFIELD_H
 #include "Tile.h"
 #include<time.h>
-#include<iostream>
+#include<iostream>      //fuer wostringstream
+#include <QString>
 //#include <windows.h>
 //#include <conio.h> fuer Windows Version
-#include <QString>
 
 using namespace std;
 
@@ -30,7 +30,7 @@ using namespace std;
 class PlayingField{
 
 public:
-    PlayingField();
+    PlayingField(wostream & os = wcout);
     void ausgabe();                     //Ausgabe des Bretts
     void start();                       //Start of the game
 
@@ -40,8 +40,8 @@ public:
     int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
 private:
-    Tile ** SpielFeld;//Brett als Zweidimensionales Array
-    int richtung;     ///<Gueltige Werte (0..4)
+    Tile ** SpielFeld;                  //Brett als Zweidimensionales Array
+    int richtung;                       ///<Gueltige Werte (0..4)
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld

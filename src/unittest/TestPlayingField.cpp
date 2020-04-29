@@ -93,3 +93,10 @@ TEST(wostringstream, CanBeWritteAndCompared){
     EXPECT_EQ(QString::fromStdWString(output.str()),QString::fromStdWString(someWideString));
 }
 
+/// \test
+TEST(PlayingField, acceptsWostreamInConstructor){
+    wostringstream output;
+    PlayingField playingField(output);
+    (void)playingField;
+
+}
