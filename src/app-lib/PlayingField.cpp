@@ -1,7 +1,9 @@
 #include "PlayingField.h"
 
-PlayingField::PlayingField(wostream &/*os*/)
+PlayingField::PlayingField(wostream & os)
 {
+    os<<"Welcome to 2048"<<endl;
+
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
     for(int i=0; i<4; i++){

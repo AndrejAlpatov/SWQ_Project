@@ -94,9 +94,13 @@ TEST(wostringstream, CanBeWritteAndCompared){
 }
 
 /// \test
-TEST(PlayingField, acceptsWostreamInConstructor){
+TEST(PlayingField, saysHelloOnStartUp){
+    //Setup
     wostringstream output;
+    const wstring hello(L"Welcome to 2048\n");
+    //Execute
     PlayingField playingField(output);
     (void)playingField;
-
+    //Verify
+    EXPECT_EQ(output.str(),hello);
 }
