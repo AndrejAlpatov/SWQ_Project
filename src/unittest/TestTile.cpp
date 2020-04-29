@@ -8,7 +8,7 @@
 #include "app-lib/app-lib.h"
 #include "Helpers.h"
 #include <gtest/gtest.h>
-#include <iostream>
+//#include <iostream>
 
 /// \test
 TEST(TestTile,getTileFreiheitAndWert) {
@@ -22,8 +22,6 @@ TEST(TestTile,getTileFreiheitAndWert) {
     ASSERT_EQ(field.getWert(), 2048);
 }
 
-
-
 /// \test
 TEST(TestTile,setTileFreiheitAndWert) {
     //Arrange
@@ -36,4 +34,10 @@ TEST(TestTile,setTileFreiheitAndWert) {
 
     ASSERT_FALSE(field.getFrei()) ;
     ASSERT_EQ(field.getWert(), 2048);
+}
+
+/// \test
+TEST(test2048, CanBeCreated){
+    PlayingField testField;
+    SUCCEED();
 }
