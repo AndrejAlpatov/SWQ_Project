@@ -14,7 +14,10 @@
 /// \test
 TEST(TestPlayingField,SearchForFreePlayingFieldUnreal) {
     //Arrange
-    PlayingField field;
+    wostringstream output;
+    wistringstream input;
+
+    PlayingField field(input, output);
     const int unset =-1;
 
     //Act
@@ -28,7 +31,10 @@ TEST(TestPlayingField,SearchForFreePlayingFieldUnreal) {
 
 TEST(TestPlayingField,SearchForFreePlayingFieldReal) {
     //Arrange
-    PlayingField field;
+    wostringstream output;
+    wistringstream input;
+
+    PlayingField field(input, output);
     const int unset =-1;
 
     //Act
@@ -98,10 +104,12 @@ TEST(PlayingField, startsOutputWithWelcomeOnStartup){
 
     //Setup
     wostringstream output;
+    wistringstream input;
+
     const wstring hello(L"Welcome to 2048\n");
 
     //Execute
-    PlayingField playingField(output);
+    PlayingField playingField(input, output);
 
     //Verify
     EXPECT_EQ(output.str().substr(0,hello.size()),hello);

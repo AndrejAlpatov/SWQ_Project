@@ -30,7 +30,7 @@ using namespace std;
 class PlayingField{
 
 public:
-    PlayingField(wostream & os = wcout);
+    PlayingField(wistream & is = wcin, wostream & os = wcout);
 
     void ausgabe();                     //Ausgabe des Bretts
     void start();                       //Start of the game
@@ -42,6 +42,8 @@ public:
 private:
     Tile ** SpielFeld;                  //Brett als Zweidimensionales Array
     int richtung;                       ///<Gueltige Werte (0..4)
+    wistream & input;                   //for test input stream
+    wostream & output;                  //for test output stream
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld

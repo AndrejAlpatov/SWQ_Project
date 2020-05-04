@@ -1,7 +1,7 @@
 #include "PlayingField.h"
 #include<VersionInfo.h>
 
-PlayingField::PlayingField(wostream & os)
+PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os)
 {
     os <<"Welcome to 2048"<<endl;
     os << L"Version: " << VersionInfo::getVersion().toStdWString()

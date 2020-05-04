@@ -9,6 +9,8 @@
 
 #include "app-lib/app-lib.h"
 #include <QCoreApplication>
+#include "googletest/gtest/gtest.h"
+
 
 /// My little main() function.
 /// Not much is happening here, it's just a "hello world". We just
@@ -18,7 +20,8 @@ int main( int argc, char ** argv )
 {
     QCoreApplication app(argc, argv);
 
-    PlayingField a;
+    wistringstream input;
+    PlayingField a(input);
     a.start();
 
 }

@@ -37,9 +37,10 @@ TEST(TestTile,setTileFreiheitAndWert) {
 }
 
 /// \test
-TEST(test2048, CanBeCreated){
+TEST(test2048, CanBeCreatedWithIstreamAndOstream){
     wostringstream ignored;
-    PlayingField testField(ignored);
+    wistringstream inputIgnored;
+    PlayingField testField(inputIgnored, ignored);
 
     SUCCEED();
 }
