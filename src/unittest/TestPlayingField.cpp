@@ -127,10 +127,77 @@ TEST(wistringstream, providesNothingIfEmpty){
     EXPECT_TRUE(s.empty());
 
     //zusaetzliche preconditions (Vorbedingungen) testen:
-    ASSERT_TRUE(input.eof());//Strom ist am Ende der Datei. Alles ist schon abgelesen
+    ASSERT_TRUE(input.eof());//Strom ist am Ende der Datei.
     ASSERT_FALSE(input);//kann nichts liefern
     ASSERT_FALSE(input.good());//Nichts zu lesen
 
     //Teardown
+
+}
+
+/// \test
+TEST(wistringstream, providesSomeString){
+    //Setup
+    wistringstream input(L"Hello World");
+    wstring s;
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_TRUE(input.good());//Fehlerfrei und man kann ihn lesen
+    ASSERT_TRUE(input);//Wie .good aber schneller
+    ASSERT_FALSE(input.eof());
+    ASSERT_TRUE(s.empty());
+
+    //Execute
+    input>>s;
+
+    //Verify
+    EXPECT_EQ(s, L"Hello");
+    EXPECT_FALSE(s.empty());
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_FALSE(input.eof());//Strom ist nicht am Ende der Datei. "World" ist noch zu lesen
+    ASSERT_TRUE(input);//kann etwas liefern
+    ASSERT_TRUE(input.good());//es gibt was zu lesen
+
+    //Teardown
+
+}
+
+/// \test
+TEST(wistringstream, readsALine){
+    //Setup
+    wistringstream input(L"Hello World");
+    wstring s;
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_TRUE(input.good());//Fehlerfrei und man kann ihn lesen
+    ASSERT_TRUE(input);//Wie .good aber schneller
+    ASSERT_FALSE(input.eof());
+    ASSERT_TRUE(s.empty());
+
+    //Execute
+    getline(input,s);
+
+    //Verify
+    EXPECT_EQ(s, L"Hello World");
+    EXPECT_FALSE(s.empty());
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_TRUE(input.eof());//Strom ist nicht am Ende der Datei. "World" ist noch zu lesen
+    ASSERT_TRUE(input);//kann etwas liefern
+    ASSERT_FALSE(input.good());//es gibt nichts zu lesen. Opposit to ASSERT_TRUE(input.eof());
+
+    //Was passiert, wenn es noch weiter gelesen wird?
+    input>>s;
+    EXPECT_FALSE(s.empty());
+    EXPECT_TRUE(input.eof());
+    EXPECT_FALSE(input);
+    EXPECT_EQ(s, L"Hello World");
+
+    s=L"";
+    EXPECT_TRUE(s.empty());
+    EXPECT_TRUE(input.eof());
+    EXPECT_FALSE(input); //stream is empty
+    EXPECT_EQ(s, L"");
 
 }
