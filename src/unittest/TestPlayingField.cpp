@@ -57,7 +57,7 @@ TEST(wString, CanBeCompared){
     wstring wStringHello = L"Hello ©";
     wchar_t const * pointerWorld = L"World €";
 
-    EXPECT_NE(wStringHello,pointerWorld);   //EXPECT_NE und nicht EXPECTSTRNE while pointerhello
+    EXPECT_NE(wStringHello,pointerWorld);   //EXPECT_NE und nicht EXPECTSTRNE while wStringhello
                                             //kein Pointer oder White character Pointer ist
 }
 
@@ -84,7 +84,7 @@ using namespace std;
 /// \test
 TEST(wostringstream, CanBeWritteAndCompared){
     wostringstream output;
-    wstring someWideString(L"Hello World with öäßüПивет Мир");
+    wstring someWideString(L"Hello World with öäßüПривет Мир");
     output<<someWideString;
 
     //someWideString+=LR"(\o/)";
@@ -105,4 +105,32 @@ TEST(PlayingField, startsOutputWithWelcomeOnStartup){
 
     //Verify
     EXPECT_EQ(output.str().substr(0,hello.size()),hello);
+}
+
+/// \test
+TEST(wistringstream, providesNothingIfEmpty){
+    //Setup
+    wistringstream input;
+    wstring s;
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_TRUE(input.good());//Fehlerfrei und man kann ihn lesen
+    ASSERT_TRUE(input);//Wie .good aber schneller
+    ASSERT_FALSE(input.eof());
+    ASSERT_TRUE(s.empty());
+
+    //Execute
+    input>>s;
+
+    //Verify
+    EXPECT_EQ(s, L"");
+    EXPECT_TRUE(s.empty());
+
+    //zusaetzliche preconditions (Vorbedingungen) testen:
+    ASSERT_TRUE(input.eof());//Strom ist am Ende der Datei. Alles ist schon abgelesen
+    ASSERT_FALSE(input);//kann nichts liefern
+    ASSERT_FALSE(input.good());//Nichts zu lesen
+
+    //Teardown
+
 }

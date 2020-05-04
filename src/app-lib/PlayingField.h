@@ -31,13 +31,13 @@ class PlayingField{
 
 public:
     PlayingField(wostream & os = wcout);
+
     void ausgabe();                     //Ausgabe des Bretts
     void start();                       //Start of the game
+    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
     void setAlleFelderBesetzt();        //For Test freiFeldSuche()
     void setEinFeldFrei();              //For Test freiFeldSuche()
-
-    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
 private:
     Tile ** SpielFeld;                  //Brett als Zweidimensionales Array
