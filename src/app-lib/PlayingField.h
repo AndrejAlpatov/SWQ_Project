@@ -33,7 +33,8 @@ public:
     PlayingField(wistream & is = wcin, wostream & os = wcout);
 
     void ausgabe();                     //Ausgabe des Bretts
-    void start();                       //Start of the game
+    void start();                       // Start of the game
+    void run();                         ///< Start of reading kommands
     int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
     void setAlleFelderBesetzt();        //For Test freiFeldSuche()

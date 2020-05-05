@@ -12,6 +12,20 @@
 #include <QString>      //fuer QString TEST
 
 /// \test
+TEST(PlayingField, Programm2048IsSilentWithoutARun){
+
+    //Setup
+    wostringstream output;
+    wistringstream input;
+
+    //Execute
+    PlayingField playingField(input, output);
+
+    //Verify
+    EXPECT_EQ(output.str(),L"");
+}
+
+/// \test
 TEST(TestPlayingField,SearchForFreePlayingFieldUnreal) {
     //Arrange
     wostringstream output;
@@ -110,6 +124,7 @@ TEST(PlayingField, startsOutputWithWelcomeOnStartup){
 
     //Execute
     PlayingField playingField(input, output);
+    playingField.run();
 
     //Verify
     EXPECT_EQ(output.str().substr(0,hello.size()),hello);
@@ -127,6 +142,7 @@ TEST(PlayingField, outputsPromptAndByeAtEmptyInput){
 
     //Execute
     PlayingField playingField(emptyInputStream, outputStream);
+    playingField.run();
 
     //Verify
     wstring output = outputStream.str();
@@ -157,6 +173,7 @@ TEST(PlayingField, outputsPromptTwoTimesForOneBlankLineOfInput){
 
     //Execute
     PlayingField playingField(oneBlankLineOfImport, outputStream);
+    playingField.run();//Ein- Ausgabe wird in die Methode run() übertragen
 
     //Verify
     wstring output = outputStream.str();
