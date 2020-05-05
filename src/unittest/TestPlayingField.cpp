@@ -123,19 +123,50 @@ TEST(PlayingField, outputsPromptAndByeAtEmptyInput){
     wistringstream emptyInputStream;
 
     const wstring prompt(L"Geben Sie 'b' fuer Anfang ein:");
-    const wstring goodbye(L"Thank you for your wasted time.");
+    const wstring goodbye(L"\nThank you for your wasted time.");
 
     //Execute
     PlayingField playingField(emptyInputStream, outputStream);
 
     //Verify
     wstring output = outputStream.str();
-    wstring errorMessage;
-    errorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
-    EXPECT_NE(output.find(prompt), string::npos) << errorMessage;//npos - Rueckgabewert, wenn nicht gefunfden is
-    EXPECT_EQ(output.find(prompt), output.rfind(prompt));//rfind - Suche vom Ende an
-    EXPECT_NE(output.find(goodbye),string::npos);
-    EXPECT_LT(output.find(prompt), output.find(goodbye));//Prompt kommt vor Goodbye
+    wstring promptErrorMessage;
+    wstring goodByeErrorMessage;
+
+    promptErrorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
+    goodByeErrorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
+    EXPECT_NE(output.find(prompt), wstring::npos) << promptErrorMessage;//npos - Rueckgabewert, wenn nicht gefunfden is
+    EXPECT_EQ(output.find(prompt), output.rfind(prompt)) << promptErrorMessage;//rfind - Suche vom Ende an
+    //und wenn EQ heisst, dass nur einmal getroffen haben, weil gleiche Position zurückgibt. Wenn 2Mal=>trifft auf verschiedenen Positionen
+    EXPECT_NE(output.find(goodbye),wstring::npos) << goodByeErrorMessage;
+    EXPECT_LT(output.find(prompt), output.find(goodbye)) << goodByeErrorMessage;//Prompt kommt vor Goodbye
+}
+
+/// \test
+TEST(PlayingField, outputsPromptTwoTimesForOneBlankLineOfInput){
+
+    //Setup
+    wistringstream oneBlankLineOfImport(L"\n");
+    wostringstream outputStream;
+
+
+    const wstring prompt(L"Geben Sie 'b' fuer Anfang ein:\n"
+                         L"Leere Eingabe, bitte wiederholen!\n"
+                         L"Geben Sie 'b' fuer Anfang ein:"
+                         );
+
+    //Execute
+    PlayingField playingField(oneBlankLineOfImport, outputStream);
+
+    //Verify
+    wstring output = outputStream.str();
+    wstring promptErrorMessage;
+    wstring goodByeErrorMessage;
+
+    promptErrorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
+    EXPECT_NE(output.find(prompt), wstring::npos) << promptErrorMessage;
+    EXPECT_EQ(output.find(prompt), output.rfind(prompt)) << promptErrorMessage;
+
 }
 
 /// \test

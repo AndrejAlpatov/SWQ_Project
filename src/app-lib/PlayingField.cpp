@@ -3,10 +3,20 @@
 
 PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os)
 {
-    os <<"Welcome to 2048"<<endl;
+    os << L"Welcome to 2048"<<endl;//ohne "L" geht es auch
     os << L"Version: " << VersionInfo::getVersion().toStdWString()
        << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
     os << L"Geben Sie 'b' fuer Anfang ein:";
+    wstring fuerB;
+    getline(input, fuerB);
+
+    if( !input.eof()){
+       os << L"\nLeere Eingabe, bitte wiederholen!\n"
+             L"Geben Sie 'b' fuer Anfang ein:";
+    }
+
+
+    os << L"\nThank you for your wasted time."<<endl;
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
     for(int i=0; i<4; i++){
