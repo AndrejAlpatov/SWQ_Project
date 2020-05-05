@@ -116,6 +116,29 @@ TEST(PlayingField, startsOutputWithWelcomeOnStartup){
 }
 
 /// \test
+TEST(PlayingField, outputsPromptAndByeAtEmptyInput){
+
+    //Setup
+    wostringstream outputStream;
+    wistringstream emptyInputStream;
+
+    const wstring prompt(L"Geben Sie 'b' fuer Anfang ein:");
+    const wstring goodbye(L"Thank you for your wasted time.");
+
+    //Execute
+    PlayingField playingField(emptyInputStream, outputStream);
+
+    //Verify
+    wstring output = outputStream.str();
+    wstring errorMessage;
+    errorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
+    EXPECT_NE(output.find(prompt), string::npos) << errorMessage;//npos - Rueckgabewert, wenn nicht gefunfden is
+    EXPECT_EQ(output.find(prompt), output.rfind(prompt));//rfind - Suche vom Ende an
+    EXPECT_NE(output.find(goodbye),string::npos);
+    EXPECT_LT(output.find(prompt), output.find(goodbye));//Prompt kommt vor Goodbye
+}
+
+/// \test
 TEST(wistringstream, providesNothingIfEmpty){
     //Setup
     wistringstream input;
@@ -151,7 +174,7 @@ TEST(wistringstream, providesSomeString){
 
     //zusaetzliche preconditions (Vorbedingungen) testen:
     ASSERT_TRUE(input.good());//Fehlerfrei und man kann ihn lesen
-    ASSERT_TRUE(input);//Wie .good aber schneller
+    ASSERT_TRUE(input);//Returns true if the stream has no errors and is ready for I/O operations
     ASSERT_FALSE(input.eof());
     ASSERT_TRUE(s.empty());
 
@@ -163,9 +186,9 @@ TEST(wistringstream, providesSomeString){
     EXPECT_FALSE(s.empty());
 
     //zusaetzliche preconditions (Vorbedingungen) testen:
-    ASSERT_FALSE(input.eof());//Strom ist nicht am Ende der Datei. "World" ist noch zu lesen
-    ASSERT_TRUE(input);//kann etwas liefern
-    ASSERT_TRUE(input.good());//es gibt was zu lesen
+    ASSERT_FALSE(input.eof());//Strom ist nicht am Ende der Datei. "World" ist noch zu lesen || checks if end-of-file has been reached
+    ASSERT_TRUE(input);//Returns true if the stream has no errors and is ready for I/O operations
+    ASSERT_TRUE(input.good());//es gibt was zu lesen || checks if no error has occurred i.e. I/O operations are available
 
     //Teardown
 

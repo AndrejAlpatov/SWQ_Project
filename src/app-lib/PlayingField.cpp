@@ -6,7 +6,7 @@ PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os)
     os <<"Welcome to 2048"<<endl;
     os << L"Version: " << VersionInfo::getVersion().toStdWString()
        << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
-
+    os << L"Geben Sie 'b' fuer Anfang ein:";
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
     for(int i=0; i<4; i++){
