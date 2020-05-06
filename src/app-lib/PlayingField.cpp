@@ -1,7 +1,7 @@
 #include "PlayingField.h"
 #include<VersionInfo.h>
 
-PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os)
+PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os), ui(is,os)//Nicht vergessen ui zu initialisieren!!!!!!!!!!
 {
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
@@ -18,7 +18,7 @@ PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os)
     setWerteAnFelder(freiFeldSuche());
     setWerteAnFelder(freiFeldSuche());
 
-    ausgabe();
+    //ausgabe();
 }
 
 void PlayingField::ausgabe()
@@ -41,9 +41,7 @@ void PlayingField::start()
 
 void PlayingField::run()
 {
-    output << L"Welcome to 2048"<<endl;//ohne "L" geht es auch
-    output << L"Version: " << VersionInfo::getVersion().toStdWString()
-       << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
+    ui.sayWelcome();
     output << L"Geben Sie 'b' fuer Anfang ein:";
     wstring fuerB;
     getline(input, fuerB);
@@ -56,6 +54,7 @@ void PlayingField::run()
 
     output << L"\nThank you for your wasted time."<<endl;
 
+   // wcout<< output;
 }
 
 void PlayingField::setAlleFelderBesetzt()

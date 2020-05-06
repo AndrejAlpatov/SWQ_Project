@@ -23,6 +23,7 @@ int main( int argc, char ** argv )
 
     wistringstream input;
     PlayingField a(input);
-    a.start();
+    //a.start();
+    a.run();
 
 }

@@ -11,14 +11,21 @@
 /// \todo gameOver() muss noch modifiziert werden
 /// \todo Noch einmal alle vorherige Kommentare ueberpruefen (auf Russisch loeschen)
 //============================================================================
+
+/*#define NOT_ONLY_WINDOWS
+#ifndef NOT_ONLY_WINDOWS
+#include <windows.h>
+#include <conio.h> //fuer Windows Version
+#endif*/
+
 #ifndef PLAYINGFIELD_H
 #define PLAYINGFIELD_H
-#include "Tile.h"
+
 #include<time.h>
-#include<iostream>      //fuer wostringstream
+#include<iostream>
 #include <QString>
-//#include <windows.h>
-//#include <conio.h> fuer Windows Version
+#include"TextUI.h"
+#include "Tile.h"
 
 using namespace std;
 
@@ -45,6 +52,7 @@ private:
     int richtung;                       ///<Gueltige Werte (0..4)
     wistream & input;                   //for test input stream
     wostream & output;                  //for test output stream
+    TextUI ui;                          /// \todo UI&ui NICHT VERGESSEN ZU INITIALISIEREN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld

@@ -15,6 +15,10 @@ using namespace std;
 class TextUI{
 public:
     TextUI(wistream & is = wcin, wostream & os = wcout);
+    void sayWelcome();                 ///< Outputstream with version number
+private:
+    wistream & input;
+    wostream & output;
 
 };
 

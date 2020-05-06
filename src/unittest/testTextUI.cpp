@@ -12,14 +12,33 @@
 #include <QString>      //fuer QString TEST
 
 /// \test
-TEST(TextUI, CanBeInstantiated){
+TEST(TextUI, CanBeInstantiatedWthInputOutputStreams){
 
     //Setup
-    TextUI ui;
+    wistringstream someInputStream;
+    wostringstream someOutputstream;
 
     //Execute
+    TextUI ui(someInputStream, someOutputstream);
     (void)ui;
 
     //Verify
     //Teardown
+}
+
+/// \test
+TEST(PlayingField, canSayWelcome){
+
+    //Setup
+    const wstring hello(L"Welcome to 2048\n");
+    wostringstream output;
+    wistringstream emptyInput;
+    TextUI textui(emptyInput, output);
+
+
+    //Execute
+    textui.sayWelcome();
+
+    //Verify
+    EXPECT_EQ(output.str().substr(0,hello.size()),hello);
 }
