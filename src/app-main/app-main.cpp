@@ -20,6 +20,7 @@ int main( int argc, char ** argv )
 {
     QCoreApplication app(argc, argv);
 
+
     wistringstream input;
     PlayingField a(input);
     a.start();

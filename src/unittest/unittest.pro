@@ -11,11 +11,12 @@ CONFIG -= app_bundle    # for Mac users
 CONFIG += testcase      # adds make target for 'make check'
 
 HEADERS += \
-    Helpers.h
+    Helpers.h \
 
 SOURCES += \
     TestPlayingField.cpp \
     TestTile.cpp \
+    testTextUI.cpp \
     testmain.cpp \
     testVersionInfo.cpp \
 

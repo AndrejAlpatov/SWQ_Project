@@ -10,6 +10,7 @@ CONFIG += staticlib
 
 HEADERS += app-lib.h \
     PlayingField.h \
+    TextUI.h \
     Tile.h \
     VersionInfo.h \
 
