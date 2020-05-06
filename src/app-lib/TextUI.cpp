@@ -17,5 +17,16 @@ void TextUI::sayWelcome()
 {
     output << L"Welcome to 2048"<<endl;//ohne "L" geht es auch
     output << L"Version: " << VersionInfo::getVersion().toStdWString()
-       << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
+           << L" (" << VersionInfo::getBuildTag().toStdWString() << ")" << endl;
+}
+
+void TextUI::sayGoodBye()
+{
+    output<<L"\nThank you for your wasted time.";
+
+}
+
+void TextUI::showError(const wstring &message)
+{
+    output<< L"\n" <<message <<endl;
 }

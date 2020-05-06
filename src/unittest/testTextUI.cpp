@@ -42,3 +42,40 @@ TEST(PlayingField, canSayWelcome){
     //Verify
     EXPECT_EQ(output.str().substr(0,hello.size()),hello);
 }
+
+/// \test
+TEST(TextUI, canSayGoodBye){
+
+    //Setup
+    wostringstream outputStream;
+    wistringstream emptyInputStream;
+    const wstring goodbye(L"\nThank you for your wasted time.");
+
+    //Execute
+    TextUI textUI(emptyInputStream, outputStream);
+    textUI.sayGoodBye();
+
+    //Verify
+    EXPECT_EQ(outputStream.str(), goodbye);
+
+
+}
+
+/// \test
+TEST(TextUI, canErrorMessage){
+
+    //Setup
+    wostringstream outputStream;
+    wistringstream emptyInputStream;
+    const wstring someErrorMessage(L"Oh-Oh");
+    const wstring expectedOutput = L"\n" + someErrorMessage + L"\n";        // wstring(L"\n") + someErrorMessage + L"\n"; geht es auch
+
+    //Execute
+    TextUI textUI(emptyInputStream, outputStream);
+    textUI.showError(someErrorMessage);
+
+    //Verify
+    EXPECT_EQ(outputStream.str(), expectedOutput);
+
+
+}
