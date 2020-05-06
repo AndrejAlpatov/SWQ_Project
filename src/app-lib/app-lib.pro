@@ -16,6 +16,7 @@ HEADERS += app-lib.h \
 
 SOURCES += \
     PlayingField.cpp \
+    TextUI.cpp \
     Tile.cpp \
     VersionInfo.cpp \
 

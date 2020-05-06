@@ -1,21 +1,13 @@
 //============================================================================
 /// \file
 /// \ingroup    g_applib
-/// \brief
+/// \brief      Contents TestUI implemetetion
 /// \details    In this example it's only the simple class CalenadarDate
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
-#ifndef TEXTUI_H
-#define TEXTUI_H
-#include <iostream>
-using namespace std;
+#include "TextUI.h"
 
-/// Diese Klasse ist füt Aufgabe 5.7 erstellt
+TextUI::TextUI(wistream &/*is*/, wostream &/*os*/)
+{
 
-class TextUI{
-public:
-    TextUI(wistream & is = wcin, wostream & os = wcout);
-
-};
-
-#endif //TEXTUI_H
+}
