@@ -35,7 +35,6 @@ TEST(PlayingField, canSayWelcome){
     wistringstream emptyInput;
     TextUI textui(emptyInput, output);
 
-
     //Execute
     textui.sayWelcome();
 
@@ -57,8 +56,6 @@ TEST(TextUI, canSayGoodBye){
 
     //Verify
     EXPECT_EQ(outputStream.str(), goodbye);
-
-
 }
 
 /// \test
@@ -76,6 +73,43 @@ TEST(TextUI, canErrorMessage){
 
     //Verify
     EXPECT_EQ(outputStream.str(), expectedOutput);
+}
 
+/// \test
+TEST(TextUI, getInputLineShowsPromptOnEmptyInput){
 
+    //Setup
+    const wstring prompt(L"Geben Sie 'b' fuer Anfang ein");
+    const wstring expectedOutput = prompt + L": ";
+    wostringstream outputStream;
+    wistringstream emptyInputStream;
+    TextUI textUI(emptyInputStream, outputStream);
+
+    //Execute
+    wstring line = textUI.getInputLine(prompt);
+
+    //Verify
+    EXPECT_EQ(outputStream.str(), expectedOutput);
+    EXPECT_TRUE(line.empty()) << L"lineInput is <" << line << L">";
+}
+
+/// \test
+TEST(TextUI, getInputLineDeliversOneLineOfInput){
+
+    //Setup
+    const wstring prompt(L"Geben Sie 'b' fuer Anfang ein");
+    const wstring expectedOutput = prompt + L": ";
+    const wstring firstLineOfImport(L"First line");
+    const wstring twoLinesOfImport = firstLineOfImport + L"\nSecondLine";
+
+    wostringstream outputStream;
+    wistringstream inputStream(twoLinesOfImport);
+    TextUI textUI(inputStream, outputStream);
+
+    //Execute
+    wstring line = textUI.getInputLine(prompt);
+
+    //Verify
+    EXPECT_EQ(outputStream.str(), expectedOutput) << outputStream.str();
+    EXPECT_EQ(line, firstLineOfImport);
 }

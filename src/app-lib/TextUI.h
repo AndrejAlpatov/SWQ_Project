@@ -18,6 +18,8 @@ public:
     void sayWelcome();                 ///< Outputstream with version number
     void sayGoodBye();                 ///< Outputstream with Good bye
     void showError(wstring const & message);
+    wstring getInputLine(wstring const & prompt);
+
 private:
     wistream & input;
     wostream & output;

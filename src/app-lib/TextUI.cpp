@@ -30,3 +30,13 @@ void TextUI::showError(const wstring &message)
 {
     output<< L"\n" <<message <<endl;
 }
+
+wstring TextUI::getInputLine(const wstring &prompt)
+{
+    output << prompt + L": ";   //dafür: EXPECT_EQ(outputStream.str(), expectedOutput);      statt prompt + L": ", kann man prompt << L": "
+   // return L"";                  //dafür:  EXPECT_TRUE(line.empty());
+    wstring line;
+    getline(input, line);
+
+    return  line;//Gibt zurück die erste Line vom Eingabestrom (input)
+}
