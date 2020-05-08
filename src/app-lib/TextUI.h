@@ -19,6 +19,7 @@ public:
     void sayGoodBye();                 ///< Outputstream with Good bye
     void showError(wstring const & message);
     wstring getInputLine(wstring const & prompt);
+    wstring getFilledInputLine(std::wstring const &prompt, std::wstring const &errorMessage);
 
 private:
     wistream & input;

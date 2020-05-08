@@ -183,7 +183,6 @@ TEST(PlayingField, outputsPromptTwoTimesForOneBlankLineOfInput){
     promptErrorMessage+= L"for output <" + output + L"> and prompt <" + prompt + L">";
     EXPECT_NE(output.find(prompt), wstring::npos) << promptErrorMessage;
     EXPECT_EQ(output.find(prompt), output.rfind(prompt)) << promptErrorMessage;
-
 }
 
 /// \test

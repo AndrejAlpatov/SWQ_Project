@@ -41,17 +41,26 @@ void PlayingField::start()
 
 void PlayingField::run()
 {
-    ui.sayWelcome();//macht: output << L"Welcome to 2048"<<endl; und Versionsiformation
-    output << L"Geben Sie 'b' fuer Anfang ein:";
-    wstring fuerB;
-    getline(input, fuerB);
+    ui.sayWelcome();            //macht: output << L"Welcome to 2048"<<endl; und Versionsiformation
 
-    if( !input.eof()){
-        ui.showError(L"Leere Eingabe, bitte wiederholen!");
-        output << L"Geben Sie 'b' fuer Anfang ein:";
-    }
 
-    ui.sayGoodBye(); // macht: output << L"\nThank you for your wasted time."<<endl;
+    wstring command =ui.getFilledInputLine(L"Geben Sie 'b' fuer Anfang ein",
+                                           L"Leere Eingabe, bitte wiederholen!");
+    (void)command;
+    ui.sayGoodBye();            // macht: output << L"\nThank you for your wasted time."<<endl;
+
+
+
+                 //alte Version
+
+//                         output << L"Geben Sie 'b' fuer Anfang ein:";
+//                         wstring fuerB;
+//                         getline(input, fuerB);
+//                         ui.getInputLine(L"Geben Sie 'b' fuer Anfang ein");
+//                         if( !input.eof()){
+//                             ui.showError(L"Leere Eingabe, bitte wiederholen!");
+//                             ui.getInputLine(L"Geben Sie 'b' fuer Anfang ein");      //output << L"Geben Sie 'b' fuer Anfang ein:";
+//                         }
 }
 
 void PlayingField::setAlleFelderBesetzt()

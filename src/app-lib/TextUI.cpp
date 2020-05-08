@@ -33,10 +33,24 @@ void TextUI::showError(const wstring &message)
 
 wstring TextUI::getInputLine(const wstring &prompt)
 {
-    output << prompt + L": ";   //dafür: EXPECT_EQ(outputStream.str(), expectedOutput);      statt prompt + L": ", kann man prompt << L": "
+    output << prompt + L":";   //dafür: EXPECT_EQ(outputStream.str(), expectedOutput);      statt prompt + L": ", kann man prompt << L": "
    // return L"";                  //dafür:  EXPECT_TRUE(line.empty());
     wstring line;
     getline(input, line);
 
     return  line;//Gibt zurück die erste Line vom Eingabestrom (input)
+}
+
+//выводит в выходящий поток prompt, затем errorMessage, затем еще раз prompt
+wstring TextUI::getFilledInputLine(const wstring &prompt, const wstring &errorMessage)
+{
+    wstring line;
+    while (1) {
+        line=getInputLine(prompt);//выводит в выходящий поток prompt и присваивает line значение пустой строки
+        if(!line.empty() || input.eof()){//Прерывает цикл input.eof(), которое срабатывает при втором проходе.
+            break;
+        }
+        output<<L"\n"<<errorMessage<<endl;
+    }
+    return  line;
 }
