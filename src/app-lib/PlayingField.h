@@ -22,9 +22,8 @@
 #define PLAYINGFIELD_H
 
 #include<time.h>
-//#include<iostream>
 #include <QString>
-#include"TextUI.h"
+#include"UI.h"
 #include "Tile.h"
 
 using namespace std;
@@ -38,7 +37,7 @@ class PlayingField{
 
 public:
    // PlayingField(wistream & is = wcin, wostream & os = wcout);
-    PlayingField(TextUI & ui);
+    PlayingField(UI & ui);
 
     void ausgabe();                     //Ausgabe des Bretts
     void start();                       // Start of the game
@@ -56,7 +55,8 @@ private:
     // wistream & input;                   //for test input stream
     // wostream & output;                  //for test output stream
 
-    TextUI ui;                          /// \todo UI&ui NICHT VERGESSEN ZU INITIALISIEREN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //если абстрактный класс, то делаем ссылку
+    UI & ui;                          /// \todo UI&ui NICHT VERGESSEN ZU INITIALISIEREN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld

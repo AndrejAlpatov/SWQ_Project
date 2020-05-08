@@ -21,7 +21,7 @@
     //ausgabe();
 }*/
 
-PlayingField::PlayingField(TextUI &ui_in):ui(ui_in)
+PlayingField::PlayingField(UI &ui_in):ui(ui_in)
 {
     //Array-Initialisierung
     SpielFeld = new Tile *[4];

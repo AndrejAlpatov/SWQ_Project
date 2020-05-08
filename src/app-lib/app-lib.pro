@@ -12,12 +12,14 @@ HEADERS += app-lib.h \
     PlayingField.h \
     TextUI.h \
     Tile.h \
+    UI.h \
     VersionInfo.h \
 
 SOURCES += \
     PlayingField.cpp \
     TextUI.cpp \
     Tile.cpp \
+    UI.cpp \
     VersionInfo.cpp \
 
 OTHER_FILES += applib.dox

@@ -8,11 +8,12 @@
 #ifndef TEXTUI_H
 #define TEXTUI_H
 #include <iostream>
+#include"UI.h"
 using namespace std;
 
 /// Diese Klasse ist füt Aufgabe 5.7 erstellt
 
-class TextUI{
+class TextUI: public UI{
 public:
     TextUI(wistream & is = wcin, wostream & os = wcout);
     void sayWelcome();                 ///< Outputstream with version number

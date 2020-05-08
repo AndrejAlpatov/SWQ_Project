@@ -297,7 +297,12 @@ TEST(PlayingField, acceptsTextUIReferenceImKonstruktorPlayingField){//Созда
 
 }
 
-class SpyUI : public TextUI{
+class SpyUI : public UI{
+    void sayWelcome(){}                 ///< Outputstream with version number
+    void sayGoodBye(){}                 ///< Outputstream with Good bye
+    void showError(wstring const & /*message*/){}
+    wstring getInputLine(std::wstring const & /*prompt*/){return  L"";}
+    wstring getFilledInputLine(std::wstring const &/*prompt*/, std::wstring const &/*errorMessage*/){return L"";}
 
 };
 
