@@ -21,8 +21,9 @@ int main( int argc, char ** argv )
     QCoreApplication app(argc, argv);
 
 
-    wistringstream input;
-    PlayingField a(input);
+   // wistringstream input(L"etwas");
+    TextUI ein;
+    PlayingField a(ein);
     //a.start();
     a.run();
 

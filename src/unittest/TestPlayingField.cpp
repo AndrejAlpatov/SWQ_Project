@@ -19,7 +19,8 @@ TEST(PlayingField, Programm2048IsSilentWithoutARun){
     wistringstream input;
 
     //Execute
-    PlayingField playingField(input, output);
+    TextUI ui(input, output);
+    PlayingField playingField(ui);
 
     //Verify
     EXPECT_EQ(output.str(),L"");
@@ -31,7 +32,9 @@ TEST(TestPlayingField,SearchForFreePlayingFieldUnreal) {
     wostringstream output;
     wistringstream input;
 
-    PlayingField field(input, output);
+    TextUI ui(input, output);
+    PlayingField field(ui);
+   // PlayingField field(input, output);  ohne TextUI
     const int unset =-1;
 
     //Act
@@ -48,7 +51,8 @@ TEST(TestPlayingField,SearchForFreePlayingFieldReal) {
     wostringstream output;
     wistringstream input;
 
-    PlayingField field(input, output);
+    TextUI ui(input, output);
+    PlayingField field(ui);
     const int unset =-1;
 
     //Act
@@ -123,7 +127,8 @@ TEST(PlayingField, startsOutputWithWelcomeOnStartup){
     const wstring hello(L"Welcome to 2048\n");
 
     //Execute
-    PlayingField playingField(input, output);
+    TextUI ui(input, output);
+    PlayingField playingField(ui);
     playingField.run();
 
     //Verify
@@ -141,7 +146,8 @@ TEST(PlayingField, outputsPromptAndByeAtEmptyInput){
     const wstring goodbye(L"\nThank you for your wasted time.");
 
     //Execute
-    PlayingField playingField(emptyInputStream, outputStream);
+    TextUI ui(emptyInputStream, outputStream);
+    PlayingField playingField(ui);
     playingField.run();
 
     //Verify
@@ -172,7 +178,8 @@ TEST(PlayingField, outputsPromptTwoTimesForOneBlankLineOfInput){
                          );
 
     //Execute
-    PlayingField playingField(oneBlankLineOfImport, outputStream);
+    TextUI ui(oneBlankLineOfImport, outputStream);
+    PlayingField playingField(ui);
     playingField.run();//Ein- Ausgabe wird in die Methode run() übertragen
 
     //Verify
@@ -278,4 +285,25 @@ TEST(wistringstream, readsALine){
     EXPECT_FALSE(input); //stream is empty
     EXPECT_EQ(s, L"");
 
+}
+
+/// \test
+TEST(PlayingField, acceptsTextUIReferenceImKonstruktorPlayingField){//Создаем объект PlayingField, в констр. которого передаем объект класса TextUI
+    wistringstream emtyInput;
+    wostringstream output;
+    TextUI ui(emtyInput, output);
+
+    PlayingField plField(ui);
+
+}
+
+class SpyUI : public TextUI{
+
+};
+
+/// \test
+TEST(PlayingField, acceptsSpyUIReferenceImKonstruktorPlayingField){
+
+    SpyUI ui;
+    PlayingField plField(ui);
 }

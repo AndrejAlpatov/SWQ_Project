@@ -1,7 +1,27 @@
 #include "PlayingField.h"
 #include<VersionInfo.h>
 
-PlayingField::PlayingField(wistream &is, wostream & os): input(is), output(os), ui(is,os)//Nicht vergessen ui zu initialisieren!!!!!!!!!!
+/*PlayingField::PlayingField(wistream &is, wostream & os): ui(is,os)//Nicht vergessen ui zu initialisieren!!!!!!!!!!
+{
+    //Array-Initialisierung
+    SpielFeld = new Tile *[4];
+    for(int i=0; i<4; i++){
+        SpielFeld[i]=new Tile[4];
+    }
+
+    richtung=0;//Startwert ohne Richtung
+
+    //Fuer Zufallzahlen
+    srand(time(NULL));
+
+    //Zwei Felder muessen am Anfang des Spiels einen Wert haben
+    setWerteAnFelder(freiFeldSuche());
+    setWerteAnFelder(freiFeldSuche());
+
+    //ausgabe();
+}*/
+
+PlayingField::PlayingField(TextUI &ui_in):ui(ui_in)
 {
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
@@ -123,7 +143,7 @@ int * PlayingField::freiFeldSuche()
         if(SpielFeld[xZufall][yZufall].getFrei()){
             koordinaten[0]=xZufall;
             koordinaten[1]=yZufall;
-            return koordinaten;       
+            return koordinaten;
          }
 
         //wenn nicht frei

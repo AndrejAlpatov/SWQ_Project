@@ -40,7 +40,8 @@ TEST(TestTile,setTileFreiheitAndWert) {
 TEST(test2048, CanBeCreatedWithIstreamAndOstream){
     wostringstream ignored;
     wistringstream inputIgnored;
-    PlayingField testField(inputIgnored, ignored);
+    TextUI ui(inputIgnored, ignored);
+    PlayingField testField(ui);
 
     SUCCEED();
 }
