@@ -298,11 +298,18 @@ TEST(PlayingField, acceptsTextUIReferenceImKonstruktorPlayingField){//Созда
 }
 
 class SpyUI : public UI{
-    void sayWelcome(){}                 ///< Outputstream with version number
-    void sayGoodBye(){}                 ///< Outputstream with Good bye
+
+public:
+    SpyUI(){numberOfGoodbyCalls=0; numberOfWelcomeCalls=0;}
+    void sayWelcome(){ ++numberOfWelcomeCalls;}                 ///< Outputstream with version number
+    void sayGoodBye(){++numberOfGoodbyCalls;}                 ///< Outputstream with Good bye
     void showError(wstring const & /*message*/){}
     wstring getInputLine(std::wstring const & /*prompt*/){return  L"";}
     wstring getFilledInputLine(std::wstring const &/*prompt*/, std::wstring const &/*errorMessage*/){return L"";}
+
+    //Counters
+    size_t numberOfWelcomeCalls;
+    size_t numberOfGoodbyCalls;
 
 };
 
@@ -312,3 +319,21 @@ TEST(PlayingField, acceptsSpyUIReferenceImKonstruktorPlayingField){
     SpyUI ui;
     PlayingField plField(ui);
 }
+
+/// \test
+TEST(PlayingField, callsSayWelcomeAndSayGoodbyeOnceForEmptyInput){//Подсчет кол-ва вызовов методов при запуске run() и сравнение с заданным
+
+    //Setup
+    SpyUI spyUI;
+    PlayingField plField(spyUI);
+
+    //Execute
+    plField.run();
+
+    //Verify
+    EXPECT_EQ(spyUI.numberOfGoodbyCalls, 1U);//U для беззнакового типа, чтобы сравнивать с size_t
+    EXPECT_EQ(spyUI.numberOfWelcomeCalls, 1U);
+}
+
+
+
