@@ -8,9 +8,20 @@
 #include "app-lib/app-lib.h"
 #include "Helpers.h"
 #include <gtest/gtest.h>
+#include <vector>
 //#include <iostream>
 
-class TestDefault2048 : public ::testing::Test{
+struct TestTileData{//Praktikum 6.2
+    bool frei;
+    int wert;
+};
+
+ostream & operator <<(ostream & os,TestTileData const & data){//Praktikum 6.2 Ausgabe von Werten GetParam()
+    os<<"Frei:"<<data.frei << " Wert:"<<data.wert<<endl;
+    return  os;
+}
+
+class TestDefault2048 : public ::testing::Test{//Praktikum 6.1
 public:
     TestDefault2048(){
         cout<<"Konstruktor der Klasse TestDefault2048 ist aufgerufen"<< endl;
@@ -22,9 +33,12 @@ protected:
 
 };
 
-class TestTileGetter : public ::testing::TestWithParam<int>{
+class TestTileGetter : public ::testing::TestWithParam<TestTileData>{//Praktikum 6.2
 
 };
+
+vector<TestTileData> fieldVector={{true, 0},//Praktikum 6.2
+                                  {false, 32}};
 
 /// \test
 TEST_F(TestDefault2048,getTileFreiheitAndWert){//Praktikum 6.1
@@ -46,18 +60,22 @@ TEST_F(TestDefault2048 ,setTileFreiheitAndWert) {//Praktikum 6.1
     ASSERT_EQ(field.getWert(), 0);
 }
 
-TEST_P(TestTileGetter, returnesGiwenWert){//Praktikum 6.2
+TEST_P(TestTileGetter, returnesGiwenWertAndFreicheit){//Praktikum 6.2
 
     //setup
-    int wert=GetParam();
-    Tile tile(true, wert);
+    TestTileData tileData = GetParam();
+    Tile tile(tileData.frei, tileData.wert);
+
 
     //verify
-    EXPECT_EQ(tile.getWert(), wert);
+    EXPECT_EQ(tile.getWert(), tileData.wert);
+    EXPECT_EQ(tile.getFrei(), tileData.frei);
 
 }
 
-INSTANTIATE_TEST_SUITE_P(TileWert, TestTileGetter, ::testing::Values(0, 2, 2048));
+INSTANTIATE_TEST_SUITE_P(TileWert, TestTileGetter, ::testing::Values(TestTileData{true, 16}));
+INSTANTIATE_TEST_SUITE_P(TileWertVector, TestTileGetter, ::testing::ValuesIn(fieldVector));
+
 
 /// \test
 TEST(TestTile,getTileFreiheitAndWert) {
