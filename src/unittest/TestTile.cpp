@@ -98,7 +98,7 @@ TEST_P(TestSetWert, GrenzWertAnalyse){//Praktikum 6.3
         if(wert<=2048){
             EXPECT_NO_THROW(tile.setWert(wert))<<"Erwartet kein Exception, wenn Wert<=2048"<<endl;
         }else{
-            EXPECT_THROW(tile.setWert(wert),std::invalid_argument)<<"Throws Exception, wenn Wert>2048"<<endl;
+            EXPECT_THROW(tile.setWert(wert), invalid_argument)<<"Throws Exception, wenn Wert>2048"<<endl;
         }
 }
 
