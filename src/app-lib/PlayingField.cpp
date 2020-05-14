@@ -1,6 +1,7 @@
 #include "PlayingField.h"
+#include<VersionInfo.h>
 
-PlayingField::PlayingField()
+/*PlayingField::PlayingField(wistream &is, wostream & os): ui(is,os)//Nicht vergessen ui zu initialisieren!!!!!!!!!!
 {
     //Array-Initialisierung
     SpielFeld = new Tile *[4];
@@ -17,7 +18,27 @@ PlayingField::PlayingField()
     setWerteAnFelder(freiFeldSuche());
     setWerteAnFelder(freiFeldSuche());
 
-    ausgabe();
+    //ausgabe();
+}*/
+
+PlayingField::PlayingField(UI &ui_in):ui(ui_in)
+{
+    //Array-Initialisierung
+    SpielFeld = new Tile *[4];
+    for(int i=0; i<4; i++){
+        SpielFeld[i]=new Tile[4];
+    }
+
+    richtung=0;//Startwert ohne Richtung
+
+    //Fuer Zufallzahlen
+    srand(time(NULL));
+
+    //Zwei Felder muessen am Anfang des Spiels einen Wert haben
+    setWerteAnFelder(freiFeldSuche());
+    setWerteAnFelder(freiFeldSuche());
+
+    //ausgabe();
 }
 
 void PlayingField::ausgabe()
@@ -36,6 +57,30 @@ void PlayingField::start()
     while(1){
         move();
     }
+}
+
+void PlayingField::run()
+{
+    ui.sayWelcome();            //macht: output << L"Welcome to 2048"<<endl; und Versionsiformation
+
+
+    wstring command =ui.getFilledInputLine(L"Geben Sie 'b' fuer Anfang ein",
+                                           L"Leere Eingabe, bitte wiederholen!");
+    (void)command;
+    ui.sayGoodBye();            // macht: output << L"\nThank you for your wasted time."<<endl;
+
+
+
+                 //alte Version
+
+//                         output << L"Geben Sie 'b' fuer Anfang ein:";
+//                         wstring fuerB;
+//                         getline(input, fuerB);
+//                         ui.getInputLine(L"Geben Sie 'b' fuer Anfang ein");
+//                         if( !input.eof()){
+//                             ui.showError(L"Leere Eingabe, bitte wiederholen!");
+//                             ui.getInputLine(L"Geben Sie 'b' fuer Anfang ein");      //output << L"Geben Sie 'b' fuer Anfang ein:";
+//                         }
 }
 
 void PlayingField::setAlleFelderBesetzt()
@@ -98,7 +143,7 @@ int * PlayingField::freiFeldSuche()
         if(SpielFeld[xZufall][yZufall].getFrei()){
             koordinaten[0]=xZufall;
             koordinaten[1]=yZufall;
-            return koordinaten;       
+            return koordinaten;
          }
 
         //wenn nicht frei
@@ -868,7 +913,7 @@ int PlayingField::onKeyboardPush(){
             case 'w': cout << "Up" << endl; richtung=4; return 0;//up
             case 's': cout << "Down" << endl; richtung=3; return 0;//down
             case 'a': cout << "left" << endl; richtung=2; return 0;//links
-            case 'b': cout << "Right"<< endl; richtung=1; return 0;//rechts
+            case 'd': cout << "Right"<< endl; richtung=1; return 0;//rechts
             case 'n': gameOver(); break;
             case 'q': gameOver(); break;
         default: break;

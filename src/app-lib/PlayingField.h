@@ -11,14 +11,20 @@
 /// \todo gameOver() muss noch modifiziert werden
 /// \todo Noch einmal alle vorherige Kommentare ueberpruefen (auf Russisch loeschen)
 //============================================================================
+
+/*#define NOT_ONLY_WINDOWS
+#ifndef NOT_ONLY_WINDOWS
+#include <windows.h>
+#include <conio.h> //fuer Windows Version
+#endif*/
+
 #ifndef PLAYINGFIELD_H
 #define PLAYINGFIELD_H
-#include "Tile.h"
+
 #include<time.h>
-#include<iostream>
-//#include <windows.h>
-//#include <conio.h> fuer Windows Version
 #include <QString>
+#include"UI.h"
+#include "Tile.h"
 
 using namespace std;
 
@@ -30,18 +36,27 @@ using namespace std;
 class PlayingField{
 
 public:
-    PlayingField();
+   // PlayingField(wistream & is = wcin, wostream & os = wcout);
+    PlayingField(UI & ui);
+
     void ausgabe();                     //Ausgabe des Bretts
-    void start();                       //Start of the game
+    void start();                       // Start of the game
+    void run();                         ///< Start of reading kommands
+    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
 
     void setAlleFelderBesetzt();        //For Test freiFeldSuche()
     void setEinFeldFrei();              //For Test freiFeldSuche()
 
-    int * freiFeldSuche();              //Koordinaten vom freien Feld suchen
-
 private:
-    Tile ** SpielFeld;//Brett als Zweidimensionales Array
-    int richtung;     ///<Gueltige Werte (0..4)
+    Tile ** SpielFeld;                  //Brett als Zweidimensionales Array
+    int richtung;                       ///<Gueltige Werte (0..4)
+
+    //Mit TextUI brauchen nicht mehr
+    // wistream & input;                   //for test input stream
+    // wostream & output;                  //for test output stream
+
+    //если абстрактный класс, то делаем ссылку
+    UI & ui;                          /// \todo UI&ui NICHT VERGESSEN ZU INITIALISIEREN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     unsigned int zufallZahl();          //Zufallzahlgenerator (2 oder 4) fuer ein freis Feld
     void setWerteAnFelder(int * arr);   //Set Werte an Feld

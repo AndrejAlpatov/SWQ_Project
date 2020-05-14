@@ -13,5 +13,6 @@
 #include "VersionInfo.h"
 #include "PlayingField.h"
 #include "Tile.h"
+#include "TextUI.h"
 
 #endif

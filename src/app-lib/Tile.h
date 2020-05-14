@@ -1,7 +1,7 @@
 //============================================================================
 /// \file
 /// \ingroup    g_applib
-/// \brief      Contains the application library CalendarDate interface definition.
+/// \brief      Contains the Tile definition
 /// \details    In this example it's only the simple class CalenadarDate
 /// \copyright  GNU General Public License (GPL) Version 3
 //============================================================================
@@ -11,10 +11,14 @@
 
 /// Diese Klasse beschreibt ein Feld des Schachbrett
 /// Inhaelt drei Getter()
+/// The Definition of invalid dates will be rejected by throwing
+/// an apropriate exception
 
 class Tile{
 public:
-    Tile(bool frei=true, unsigned int wert=0);
+    ///For invalid (values)wert, an exception of type std::invalid_argument is thrown
+    static const int unset=0;
+    Tile(bool frei=true, unsigned int wert=unset);
 
     bool getFrei();
     int getWert();

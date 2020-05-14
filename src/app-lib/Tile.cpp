@@ -1,4 +1,7 @@
 #include "Tile.h"
+#include<stdexcept>
+using namespace std;
+
 Tile:: Tile(bool frei, unsigned int wert)
 {
     this->frei=frei;
@@ -17,6 +20,9 @@ int Tile::getWert()
 
 void Tile::setWert(unsigned int wert)
 {
+    if(wert>2048){
+        throw std::invalid_argument("Wert is ausserhalb Gueltigkeitsbereich");
+    }
     this->wert=wert;
 }
 
