@@ -86,9 +86,9 @@ class TestSetWert: public ::testing::TestWithParam<int>{
 
 };
 
-INSTANTIATE_TEST_SUITE_P(testGraenzwerte, TestSetWert, ::testing::Values(2047, 2048, 2049));
+INSTANTIATE_TEST_SUITE_P(testGrenzwerte, TestSetWert, ::testing::Values(2047, 2048, 2049));
 
-TEST_P(TestSetWert, GraenzWertAnalyse){//Praktikum 6.3
+TEST_P(TestSetWert, GrenzWertAnalyse){//Praktikum 6.3
 
     //setup
     int wert=GetParam();
