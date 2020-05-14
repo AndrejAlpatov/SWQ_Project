@@ -11,10 +11,14 @@
 
 /// Diese Klasse beschreibt ein Feld des Schachbrett
 /// Inhaelt drei Getter()
+/// The Definition of invalid dates will be rejected by throwing
+/// an apropriate exception
 
 class Tile{
 public:
-    Tile(bool frei=true, unsigned int wert=0);
+    ///For invalid (values)wert, an exception of type std::invalid_argument is thrown
+    static const int unset=0;
+    Tile(bool frei=true, unsigned int wert=unset);
 
     bool getFrei();
     int getWert();

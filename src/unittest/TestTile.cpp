@@ -76,6 +76,32 @@ TEST_P(TestTileGetter, returnesGiwenWertAndFreicheit){//Praktikum 6.2
 INSTANTIATE_TEST_SUITE_P(TileWert, TestTileGetter, ::testing::Values(TestTileData{true, 16}));
 INSTANTIATE_TEST_SUITE_P(TileWertVector, TestTileGetter, ::testing::ValuesIn(fieldVector));
 
+//Grenzwertanalyse entsprechend P6.3
+// Tile(bool frei, unsigned int);
+//Parameters        gueltige/ungueltige
+//wert              uAeKl2: wert>2048
+//                  gAeKl1: 0<=wert<=2048
+
+class TestSetWert: public ::testing::TestWithParam<int>{
+
+};
+
+INSTANTIATE_TEST_SUITE_P(testGraenzwerte, TestSetWert, ::testing::Values(2047, 2048, 2049));
+
+TEST_P(TestSetWert, GraenzWertAnalyse){//Praktikum 6.3
+
+    //setup
+    int wert=GetParam();
+    Tile tile;
+
+    //verify
+        if(wert<=2048){
+            EXPECT_NO_THROW(tile.setWert(wert))<<"Erwartet kein Exception, wenn Wert<=2048"<<endl;
+        }else{
+            EXPECT_THROW(tile.setWert(wert),std::invalid_argument)<<"Throws Exception, wenn Wert>2048"<<endl;
+        }
+}
+
 
 /// \test
 TEST(TestTile,getTileFreiheitAndWert) {

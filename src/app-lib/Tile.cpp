@@ -17,6 +17,9 @@ int Tile::getWert()
 
 void Tile::setWert(unsigned int wert)
 {
+    if(wert>2048){
+        throw std::invalid_argument("Wert is ausserhalb Gueltigkeitsbereich");
+    }
     this->wert=wert;
 }
 
